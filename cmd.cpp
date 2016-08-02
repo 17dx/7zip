@@ -2,7 +2,8 @@
 #include <string>
 #include <vector>
 #include <fstream> //для ifstream
-#include <stdlib.h> //для system
+#include <stdlib.h> //для system : считается что для c++  нужно брать cstdlib
+#include <unistd.h> //для exec
 #include <ctime> //  для time
 #include <io.h>  //для access
 
@@ -160,11 +161,17 @@ CArhive7zip::CArhive7zip( string& pArhiveName){
 // функция запуска 7zip и проверки правильности пароля
 bool CArhive7zip::Unzip(string& password){
     bool result = true; 
-    string cmdLine = path7zip + " e " + arhiveName + 
-                     " -p" + password + " -y >" +textout  + " 2>&1";;
+    //string cmdLine = path7zip + " e " + arhiveName + 
+    //                 " -p"+"\"" + password +"\"" +  " -y >" +textout  + " 2>&1";;
     //cout<<cmdLine<< endl;
-    
-    system( cmdLine.c_str());
+    string qwPassword =  password ;
+    string redir = " -y >" +textout  + " 2>&1";
+    //system( cmdLine.c_str());
+    execlp(path7zip.c_str(),
+           "e",arhiveName.c_str(),
+           "-p",qwPassword.c_str(),
+           "-y",
+           redir.c_str());
     string line;
     std::ifstream file(textout.c_str() );
     while (std::getline(file, line))
@@ -201,8 +208,8 @@ int  main(int argc, char* argv[])
        return 0;
     }
     CArhive7zip arhive7zip(arhiveName);
-    CGenPassword genPassword(4);
-    //CGenPasswordOnMask genPassword("*0**");
+    //CGenPassword genPassword(4);
+    CGenPasswordOnMask genPassword("*x**");
     time_t tStart, tEnd;
     time(&tStart); // получаем время начала работы программы
 
