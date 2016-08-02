@@ -95,6 +95,35 @@ bool CGenPassword::Inc(int index){
 }
 
 
+class CGenPasswordOnMask:public CGenPassword{
+public:
+  CGenPasswordOnMask(string mask);
+  virtual void CreatePassword();
+protected:
+  vector<std::string::size_type> posStar;
+
+};
+
+ CGenPasswordOnMask::CGenPasswordOnMask(string mask){
+   int lenMask=mask.length();
+   int countStar=0;
+   for(int i = 0; i < lenMask; i++){
+        if(mask[i] == '*'){
+          posStar.push_back(i);
+          countStar++;
+        }
+   }   
+   Init(countStar); // создаем и инициализируем массив
+   password=mask; 
+   CreatePassword();
+ }
+ 
+ void CGenPasswordOnMask::CreatePassword(){
+   for(int i = 0; i < lenPassword; i++){
+     password[posStar[i]]=arr[i];
+   }
+ }
+
 
 /*
 *
