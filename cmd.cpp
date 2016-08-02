@@ -4,6 +4,8 @@
 #include <fstream> //для ifstream
 #include <stdlib.h> //для system
 #include <ctime> //  для time
+#include <io.h>  //для access
+
 using std::cout;
 using std::endl;
 using std::cin;
@@ -164,6 +166,11 @@ bool CArhive7zip::FindPassword(CGenPassword& genPassword){
 int  main(int argc, char* argv[])
 {
     string arhiveName="test1.zip";
+    bool fexist = (access(arhiveName.c_str(), 0)==0) ;
+    if (not fexist) {
+       cout<< "Error file: "<< arhiveName << " not found!"<<endl;
+       return 0;
+    }
     CArhive7zip arhive7zip(arhiveName);
     CGenPassword genPassword(4);
     //CGenPasswordOnMask genPassword("*0**");
