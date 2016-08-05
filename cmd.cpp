@@ -10,9 +10,6 @@ using std::cout;
 using std::endl;
 using std::cin;
 
-const int SUCCESS=0;
-const int NO_SUCCESS=-1;
-
 
 void ExitProg(){
   cin.get(); 
@@ -35,8 +32,6 @@ CGenPassword * GetObjGenPassword(CGetOptions * options){
     }
     return genPassword;
 }
-
-
 
 int  main(int argc, char* argv[])
 {   
