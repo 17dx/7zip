@@ -5,6 +5,7 @@
 #include <stdlib.h> //для system
 #include <ctime> //  для time
 #include <io.h>  //для access
+#include "GetOptions.h"
 
 using std::cout;
 using std::endl;
@@ -137,7 +138,7 @@ protected:
 class CArhive7zip {
 public:
   
-  CArhive7zip( string& pArhiveName);
+  CArhive7zip( string& pArhiveName,string& path7zip_);
   bool Unzip(string& password);
   bool FindPassword(CGenPassword& genPassword);
 private:
@@ -148,9 +149,9 @@ private:
 };
 
 // конструктор с параметром
-CArhive7zip::CArhive7zip( string& pArhiveName){
+CArhive7zip::CArhive7zip( string& pArhiveName,string& path7zip_){
     //path7zip = "\"C:\\Program Files\\7-Zip\\7z.exe\"";
-    path7zip = "\"7zip-1512\\7z.exe\"";
+    path7zip = path7zip_;
     arhiveName = pArhiveName; 
     
     textout = "out.txt";
@@ -160,7 +161,7 @@ CArhive7zip::CArhive7zip( string& pArhiveName){
 // функция запуска 7zip и проверки правильности пароля
 bool CArhive7zip::Unzip(string& password){
     bool result = true; 
-    string cmdLine = path7zip + " e " + arhiveName + 
+    string cmdLine = "\"" + path7zip + "\""  + " e " + arhiveName + 
                      " -p" + password + " -y >" +textout  + " 2>&1";;
     //cout<<cmdLine<< endl;
     
@@ -193,20 +194,26 @@ bool CArhive7zip::FindPassword(CGenPassword& genPassword){
 
 
 int  main(int argc, char* argv[])
-{
-    string arhiveName="test1.zip";
-    bool fexist = (access(arhiveName.c_str(), 0)==0) ;
-    if (not fexist) {
-       cout<< "Error file: "<< arhiveName << " not found!"<<endl;
-       return 0;
+{   CGetOptions * options;
+    try{
+      options=new CGetOptions(argc,  argv); 
     }
-    CArhive7zip arhive7zip(arhiveName);
-    CGenPassword genPassword(4);
-    //CGenPasswordOnMask genPassword("*0**");
+    catch(int){
+      cin.get();  
+	  return 0;
+    }
+    CArhive7zip arhive7zip(options->arhiveName,options->path7zip);
+    CGenPassword * genPassword;
+    if (options->lengthPassword >0){
+       genPassword=new CGenPassword(options->lengthPassword);
+    }
+    else {
+       genPassword=new CGenPasswordOnMask(options->mask);
+    }   
     time_t tStart, tEnd;
     time(&tStart); // получаем время начала работы программы
 
-    if (not arhive7zip.FindPassword(genPassword)){
+    if (not arhive7zip.FindPassword(*genPassword)){
        cout<< "password not found "<< endl;
     };
     time(&tEnd);  // получаем время конца работы программы
