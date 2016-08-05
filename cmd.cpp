@@ -17,17 +17,19 @@ class CGenPassword{
 public:
   string password;
   CGenPassword();
-  CGenPassword(int len);
+  CGenPassword(int len, string& range);
   ~CGenPassword();
-  void Init(int len);
+  void Init(int len, string& range);
   bool Next();
   virtual void CreatePassword();
+  string  msgErr;
 protected:
   char minChar;
   char maxChar;
   int lenPassword;
   char* arr; //динамический массив из  чисел
   bool Inc(int index);
+  void ParseRangeChar(string& range);
 
 };
 
@@ -35,21 +37,36 @@ protected:
 CGenPassword::CGenPassword(){
 }
 
-CGenPassword::CGenPassword(int len){
-  Init(len);
+CGenPassword::CGenPassword(int len, string& range){
+  Init(len,range);
   CreatePassword(); //создать начальный пароль
 }
 
 //проинициализировать переменные
 // ::эта функция пригодится наследникам
-void CGenPassword::Init(int len){
-  minChar='0'; // с какого символа начать
-  maxChar='9'; //каким символом закончить
+void CGenPassword::Init(int len, string& range){
+  ParseRangeChar(range);
   lenPassword=len;
   arr = new char [lenPassword]; //выделяем память под массив
   for(int i=0; i < lenPassword; i++){
     arr[i]=minChar;
   }  
+};
+
+void CGenPassword::ParseRangeChar(string& range){
+  if(range.length()==3){
+    if(range[1]=='-'){
+      minChar=range[0]; // с какого символа начать
+      maxChar=range[2]; //каким символом закончить   
+      if(minChar > maxChar) {
+          minChar=range[2]; // с какого символа начать
+          maxChar=range[0]; //каким символом закончить 
+      }  
+      return;      
+    }  
+  }
+  msgErr= "range char not valid";
+  throw THROW_RANGE_CHAR_NOT_VALID;
 };
 
 //деструктор
@@ -98,14 +115,14 @@ bool CGenPassword::Inc(int index){
 
 class CGenPasswordOnMask:public CGenPassword{
 public:
-  CGenPasswordOnMask(string mask);
+  CGenPasswordOnMask(string mask,string& range);
   virtual void CreatePassword();
 protected:
   vector<std::string::size_type> posStar;
 
 };
 
- CGenPasswordOnMask::CGenPasswordOnMask(string mask){
+ CGenPasswordOnMask::CGenPasswordOnMask(string mask,string& range){
    int lenMask=mask.length();
    int countStar=0;
    for(int i = 0; i < lenMask; i++){
@@ -114,7 +131,7 @@ protected:
           countStar++;
         }
    }   
-   Init(countStar); // создаем и инициализируем массив
+   Init(countStar, range); // создаем и инициализируем массив
    password=mask; 
    CreatePassword();
  }
@@ -194,7 +211,8 @@ bool CArhive7zip::FindPassword(CGenPassword& genPassword){
 
 
 int  main(int argc, char* argv[])
-{   CGetOptions * options;
+{   
+    CGetOptions * options;
     try{
       options=new CGetOptions(argc,  argv); 
     }
@@ -204,12 +222,21 @@ int  main(int argc, char* argv[])
     }
     CArhive7zip arhive7zip(options->arhiveName,options->path7zip);
     CGenPassword * genPassword;
-    if (options->lengthPassword >0){
-       genPassword=new CGenPassword(options->lengthPassword);
+    
+    try {
+        if (options->lengthPassword >0){
+           genPassword=new CGenPassword(options->lengthPassword,options->range);
+        }
+        else {
+           genPassword=new CGenPasswordOnMask(options->mask,options->range);
+        }   
     }
-    else {
-       genPassword=new CGenPasswordOnMask(options->mask);
-    }   
+    catch(int){
+       cout<< genPassword->msgErr<<  endl;
+       cin.get();  
+	   return 0;
+    }
+    
     time_t tStart, tEnd;
     time(&tStart); // получаем время начала работы программы
 

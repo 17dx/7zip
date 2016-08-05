@@ -10,6 +10,7 @@ const int  THROW_LITTLE_OPTION              =5;
 const int  THROW_SKIP_ARGUMENT              =6;
 const int  THROW_REQUIRED_OPTION_L_OR_M     =7;
 const int  THROW_LITTLE_LENGTH_PASSWORD     =8;
+const int  THROW_RANGE_CHAR_NOT_VALID       =9;
 
 
 class CGetOptions{
