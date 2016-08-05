@@ -24,8 +24,8 @@ void CGetOptions::printHelp()
          + "              \"C:\\Program Files\\7-Zip\\7z.exe\"\n"
          + " -a name    - archive name, default: test.zip\n";
     PrintMSG(msg.c_str(),"");
-    throw THROW_LITTLE_OPTION;
-     
+    //throw THROW_LITTLE_OPTION;
+    throw ex_little_option() ;
 	//exit(0);
 }
 
@@ -40,7 +40,8 @@ int CGetOptions::getNextArgAsInt(int numArg){
     if (not isdigit(ArgAsString[i]))
     {
         PrintMSG("no digital argument by ",argv[numArg]);
-        throw THROW_OPTION_NO_DIGITAL_ARGUMENT;
+        //throw THROW_OPTION_NO_DIGITAL_ARGUMENT;
+        throw ex_option_no_digital_argument() ;
         //exit(0);
     }
   }
@@ -63,14 +64,16 @@ string CGetOptions::getNextArgAsString(int numArg){
                )
              ) {
                PrintMSG("skipt arguments for option ",argv[numArg]);
-               throw THROW_SKIP_ARGUMENT;
+               throw ex_skip_argument()  ;
+               //throw THROW_SKIP_ARGUMENT;
            }
         }
 
    }
    else{
-       PrintMSG("invalid arguments by option  ",argv[numArg]);
-       throw THROW_INVALID_ARGUMENTS;
+       PrintMSG("skipt arguments for option  ",argv[numArg]);
+       throw ex_skip_argument()  ;
+       //throw THROW_INVALID_ARGUMENTS;
        //exit(0);
    }
    return result;
@@ -82,7 +85,8 @@ void CGetOptions::CheckExistFile(string& fileName){
     string msg;
     msg= msg + "Error file: " + fileName + " not found!\n";
     PrintMSG(msg.c_str(),"");
-    throw THROW_FILE_NOT_FOUND;
+    throw ex_file_not_found ();
+    //throw THROW_FILE_NOT_FOUND;
     //exit(0);
  }
 
@@ -128,19 +132,22 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         
         if (ExistOpitonL && ExistOpitonM ) {
               PrintMSG( "error option -l not compatible with  option -m","");
-              throw THROW_OPTION_L_WITH_M;
+              throw ex_option_l_with_m();
+              //throw THROW_OPTION_L_WITH_M;
               //exit(0);
         }
         
         if (ExistOpitonL && (lengthPassword==0 )) {
               PrintMSG( "little length password","");
-              throw THROW_LITTLE_LENGTH_PASSWORD;
+              throw ex_little_length_password() ;
+              //throw THROW_LITTLE_LENGTH_PASSWORD;
               //exit(0);
         }
 
         if (not ExistOpitonL && not ExistOpitonM ) {
               PrintMSG( "error required option -l or -m","");
-              throw THROW_REQUIRED_OPTION_L_OR_M;
+              throw ex_required_option_l_or_m ();
+              //throw THROW_REQUIRED_OPTION_L_OR_M;
               //exit(0);
         }
 

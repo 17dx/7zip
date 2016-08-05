@@ -1,3 +1,4 @@
+//g++ GetOptions.cpp cmd.cpp -o cmd2
 #include <iostream> //для  cout, cin
 #include <string>
 #include <sstream> // для stringstream
@@ -195,7 +196,7 @@ private:
 
 // конструктор с параметром
 CArhive7zip::CArhive7zip( string& pArhiveName,string& path7zip_){
-    //path7zip = "\"C:\\Program Files\\7-Zip\\7z.exe\"";
+    //path7zip = "C:\\Program Files\\7-Zip\\7z.exe";
     path7zip = path7zip_;
     arhiveName = pArhiveName; 
     
