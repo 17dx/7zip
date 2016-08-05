@@ -1,5 +1,6 @@
 #include <iostream> //для  cout, cin
 #include <string>
+#include <sstream> // для stringstream
 #include <vector>
 #include <fstream> //для ifstream
 #include <stdlib.h> //для system
@@ -24,13 +25,14 @@ public:
   virtual void CreatePassword();
   string  msgErr;
 protected:
-  char minChar;
-  char maxChar;
+  char minValue;
+  char maxValue;
+  vector<char> charRange;
   int lenPassword;
   char* arr; //динамический массив из  чисел
   bool Inc(int index);
   void ParseRangeChar(string& range);
-
+  void AppendRange(char firstChar,char lastChar);
 };
 
 //конструктор
@@ -49,24 +51,47 @@ void CGenPassword::Init(int len, string& range){
   lenPassword=len;
   arr = new char [lenPassword]; //выделяем память под массив
   for(int i=0; i < lenPassword; i++){
-    arr[i]=minChar;
+    arr[i]=minValue;
   }  
 };
-
+    
+void CGenPassword::AppendRange(char firstChar,char lastChar){  
+    char step = (firstChar<lastChar) ? 1 : -1;
+    char ch=firstChar-step;
+    do {
+       ch+=step;
+       charRange.push_back(ch);       
+    }  while(ch-lastChar !=0);
+}
+    
 void CGenPassword::ParseRangeChar(string& range){
-  if(range.length()==3){
-    if(range[1]=='-'){
-      minChar=range[0]; // с какого символа начать
-      maxChar=range[2]; //каким символом закончить   
-      if(minChar > maxChar) {
-          minChar=range[2]; // с какого символа начать
-          maxChar=range[0]; //каким символом закончить 
-      }  
-      return;      
-    }  
+  std::stringstream ss(range);
+  string item; 
+  char firstChar;
+  char lastChar;
+  while (std::getline(ss, item, ',')){
+    if(item.length()==3){
+      if(item[1]=='-'){
+          firstChar = item[0]; // с какого символа начать
+          lastChar = item[2]; //каким символом закончить   
+          AppendRange (firstChar,lastChar);         
+      }
+    } 
+    else if(item.length()==1)  {
+       charRange.push_back(item[0]); 
+    }
+
+    
   }
-  msgErr= "range char not valid";
-  throw THROW_RANGE_CHAR_NOT_VALID;
+  
+  if (charRange.size()==0){
+     msgErr= "range char not valid";
+     throw THROW_RANGE_CHAR_NOT_VALID;
+  }
+  else{
+    minValue=0;
+    maxValue=charRange.size()-1;
+  }
 };
 
 //деструктор
@@ -85,16 +110,19 @@ bool CGenPassword::Next(){
 
  void CGenPassword::CreatePassword(){
    password="";
-   password.append(arr, lenPassword);
+   for(int i = 0; i < lenPassword; i++){
+     password+=charRange[arr[i]];
+   }
+   //password.append(arr, lenPassword);
  }
 
 //увеличить символ
 bool CGenPassword::Inc(int index){
 
-  if ( arr[index] == maxChar  ){
+  if ( arr[index] == maxValue  ){
      // если максимальный номер символа в текущей ячейке
      // то в текущей ячейке начать с начала     
-     arr[index] = minChar;
+     arr[index] = minValue;
      
      if (index ==0){
        //более старшего разряда нет, больше увеличивать нельзя
@@ -138,7 +166,7 @@ protected:
  
  void CGenPasswordOnMask::CreatePassword(){
    for(int i = 0; i < lenPassword; i++){
-     password[posStar[i]]=arr[i];
+     password[posStar[i]]=charRange[arr[i]];
    }
  }
 
