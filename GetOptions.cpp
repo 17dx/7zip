@@ -160,9 +160,7 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         if (IsFindOpitonL){
            lengthPassword=StringToInt(sLengthPassword, "length password");
         }
-        
-        
+
         TestResultParse();
 
-	
 }
