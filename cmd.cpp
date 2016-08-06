@@ -1,4 +1,4 @@
-//g++ GenPassword.cpp Arhive7zip.cpp GetOptions.cpp cmd.cpp -o cmd2
+//g++ PropOption.cpp GenPassword.cpp Arhive7zip.cpp GetOptions.cpp cmd.cpp -o cmd2
 #include <iostream> //для  cout, cin
 #include <cstdlib> // для exit
 #include <ctime> //  для time

@@ -15,37 +15,27 @@ void CGetOptions::PrintMSG(const char  * cMsg1, const char  * cMsg2){
 void CGetOptions::printHelp()
 {    
     string msg;
-    msg = msg+  "List of options:\n"
-         + " -r range   - range of characters, default: \"0-9\" \n"
-         + " -l length  - length password, not compatible with -m\n"
-         + " -m mask    - mask for password, not compatible with -l, \n"
-         + "              for example: \"ma*k\"\n"
-         + " -z path    - 7 zip program path, default: \n"
-         + "              \"C:\\Program Files\\7-Zip\\7z.exe\"\n"
-         + " -a name    - archive name, default: test.zip\n";
+    msg = msg+  "List of options:\n";
+    propOptions.GetHelpMessages(msg);
     PrintMSG(msg.c_str(),"");
     //throw THROW_LITTLE_OPTION;
     throw ex_little_option() ;
 	//exit(0);
 }
 
-
-
-int CGetOptions::getNextArgAsInt(int numArg){
-  string ArgAsString=getNextArgAsString(numArg);
-
-  int length=ArgAsString.length();
+int CGetOptions::StringToInt(string & s,const char * option){
+  int length=s.length();
 
   for (int i=0; i<length; i++){
-    if (not isdigit(ArgAsString[i]))
+    if (not isdigit(s[i]))
     {
-        PrintMSG("no digital argument by ",argv[numArg]);
+        PrintMSG("no digital value by ",option);
         //throw THROW_OPTION_NO_DIGITAL_ARGUMENT;
         throw ex_option_no_digital_argument() ;
         //exit(0);
     }
   }
-  return atoi(ArgAsString.c_str());
+  return atoi(s.c_str());
 }
 
 
@@ -55,13 +45,7 @@ string CGetOptions::getNextArgAsString(int numArg){
    if ( nextNumArg < argCount ){
         result=argv[nextNumArg];
         if (result.length()==2){
-          if (result[0]=='-' 
-              && (  result[1]=='r' 
-                 || result[1]=='l' 
-                 || result[1]=='m' 
-                 || result[1]=='z' 
-                 || result[1]=='a' 
-               )
+          if (propOptions.OptionIsRegistered(result)
              ) {
                PrintMSG("skipt arguments for option ",argv[numArg]);
                throw ex_skip_argument()  ;
@@ -92,13 +76,71 @@ void CGetOptions::CheckExistFile(string& fileName){
 
 }
 
+void CGetOptions::registerAllOptions(){
+  propOptions.registerOption( "-r",
+                      &range,
+                      " -r range   - range of characters, default: \"0-9\" \n",
+                      NULL);
+                      
+  propOptions.registerOption( "-l",
+                      &sLengthPassword,
+                      + " -l length  - length password, not compatible with -m\n",
+                      &IsFindOpitonL);
+                      
+  propOptions.registerOption( "-m",
+                      &mask,
+                      " -m mask    - mask for password, not compatible with -l, \n"
+                      "              for example: \"ma*k\"\n",
+                      &IsFindOpitonM); 
+                      
+   propOptions.registerOption( "-z",
+                      &path7zip,
+                      " -z path    - 7 zip program path, default: \n"
+                      "              \"C:\\Program Files\\7-Zip\\7z.exe\"\n",
+                      NULL);                       
+                      
+   propOptions.registerOption( "-a",
+                      &path7zip,
+                      " -a name    - archive name, default: test.zip\n",
+                      NULL);  
+
+}
+
+void CGetOptions::TestResultParse(){
+        if (IsFindOpitonL && IsFindOpitonM ) {
+              PrintMSG( "error option -l not compatible with  option -m","");
+              throw ex_option_l_with_m();
+              //throw THROW_OPTION_L_WITH_M;
+              //exit(0);
+        }
+        
+        if (IsFindOpitonL && (lengthPassword==0 )) {
+              PrintMSG( "little length password","");
+              throw ex_little_length_password() ;
+              //throw THROW_LITTLE_LENGTH_PASSWORD;
+              //exit(0);
+        }
+
+        if (not IsFindOpitonL && not IsFindOpitonM ) {
+              PrintMSG( "error required option -l or -m","");
+              throw ex_required_option_l_or_m ();
+              //throw THROW_REQUIRED_OPTION_L_OR_M;
+              //exit(0);
+        }
+
+        CheckExistFile(path7zip);
+        CheckExistFile(arhiveName);
+
+}
 
 CGetOptions::CGetOptions(int argc, char* argv_[])
-{       argCount=argc;
-        argv=argv_;// new char* [argc];
+{        
+        registerAllOptions();
+        argCount=argc;
+        argv=argv_;
 
-        bool ExistOpitonL = false;
-        bool ExistOpitonM = false;
+        // bool IsFindOpitonL = false;
+        //bool IsFindOpitonM = false;
 
         range="0-9";
         arhiveName="test.zip" ;
@@ -110,48 +152,22 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         }
 
         for (int i=0; i < argc; i+=1){
-              const char* arg = argv[i];
-              if (strcmp(arg, "-r") == 0){
-                  range=getNextArgAsString(i);
-              }
-              if (strcmp(arg, "-l") == 0){
-                  lengthPassword=getNextArgAsInt(i);
-                  ExistOpitonL = true;
-              }
-              if (strcmp(arg, "-m") == 0){
-                  mask=getNextArgAsString(i);
-                  ExistOpitonM = true;
-              }
-              if (strcmp(arg, "-z") == 0){
-                  path7zip=getNextArgAsString(i);
-              }
-              if (strcmp(arg, "-a") == 0){
-                  arhiveName=getNextArgAsString(i);
+              string opt = argv[i];
+              if (propOptions.OptionIsRegistered(opt) ){
+                 if (propOptions.NeedArgum(opt) ) {
+                 
+                   string argValue=getNextArgAsString(i);
+                   propOptions.SetArgum(opt,argValue) ;                
+                 }
               }
         }
         
-        if (ExistOpitonL && ExistOpitonM ) {
-              PrintMSG( "error option -l not compatible with  option -m","");
-              throw ex_option_l_with_m();
-              //throw THROW_OPTION_L_WITH_M;
-              //exit(0);
+        if (IsFindOpitonL){
+           lengthPassword=StringToInt(sLengthPassword, "length password");
         }
         
-        if (ExistOpitonL && (lengthPassword==0 )) {
-              PrintMSG( "little length password","");
-              throw ex_little_length_password() ;
-              //throw THROW_LITTLE_LENGTH_PASSWORD;
-              //exit(0);
-        }
+        
+        TestResultParse();
 
-        if (not ExistOpitonL && not ExistOpitonM ) {
-              PrintMSG( "error required option -l or -m","");
-              throw ex_required_option_l_or_m ();
-              //throw THROW_REQUIRED_OPTION_L_OR_M;
-              //exit(0);
-        }
-
-        CheckExistFile(path7zip);
-        CheckExistFile(arhiveName);
 	
 }
