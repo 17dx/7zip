@@ -19,10 +19,7 @@ class ex_range_char_not_valid : public std::exception{};
 class CGetOptions{
  public:
    CGetOptions(int argc, char* argv_[]);
-   int getNextArgAsInt(int numArg);
-   void printHelp();
-
-   string getNextArgAsString(int numArg);
+   
    string range;
    int lengthPassword;
    string mask;
@@ -38,6 +35,9 @@ class CGetOptions{
    void CheckExistFile(string& fileName);
    //void PrintMSG(string & msg);
    void PrintMSG(const char  * cMsg1, const char  * cMsg2);
+   int getNextArgAsInt(int numArg);
+   void printHelp();
+   string getNextArgAsString(int numArg);
 };
 
 #endif // GETOPTIONS_H
