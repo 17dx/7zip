@@ -18,7 +18,6 @@ void CGetOptions::printHelp()
     msg = msg+  "List of options:\n";
     propOptions.GetHelpMessages(msg);
     PrintMSG(msg.c_str(),"");
-    //throw THROW_LITTLE_OPTION;
     throw ex_little_option() ;
 	//exit(0);
 }
@@ -30,7 +29,6 @@ int CGetOptions::StringToInt(string & s,const char * option){
     if (not isdigit(s[i]))
     {
         PrintMSG("no digital value by ",option);
-        //throw THROW_OPTION_NO_DIGITAL_ARGUMENT;
         throw ex_option_no_digital_argument() ;
         //exit(0);
     }
@@ -49,7 +47,6 @@ string CGetOptions::getNextArgAsString(int numArg){
              ) {
                PrintMSG("skipt arguments for option ",argv[numArg]);
                throw ex_skip_argument()  ;
-               //throw THROW_SKIP_ARGUMENT;
            }
         }
 
@@ -57,7 +54,6 @@ string CGetOptions::getNextArgAsString(int numArg){
    else{
        PrintMSG("skipt arguments for option  ",argv[numArg]);
        throw ex_skip_argument()  ;
-       //throw THROW_INVALID_ARGUMENTS;
        //exit(0);
    }
    return result;
@@ -70,7 +66,6 @@ void CGetOptions::CheckExistFile(string& fileName){
     msg= msg + "Error file: " + fileName + " not found!\n";
     PrintMSG(msg.c_str(),"");
     throw ex_file_not_found ();
-    //throw THROW_FILE_NOT_FOUND;
     //exit(0);
  }
 
@@ -84,7 +79,7 @@ void CGetOptions::registerAllOptions(){
                       
   propOptions.registerOption( "-l",
                       &sLengthPassword,
-                      + " -l length  - length password, not compatible with -m\n",
+                      " -l length  - length password, not compatible with -m\n",
                       &IsFindOpitonL);
                       
   propOptions.registerOption( "-m",
