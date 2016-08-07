@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="wrapper7z.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="wrapper7z"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="19"/>
+        <CursorPos X="41" Y="32"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="sevenzip.pas"/>
+        <UnitName Value="sevenzip"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="485"/>
+        <CursorPos X="25" Y="501"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="C:\lazarus\fpc\2.6.0\source\rtl\inc\systemh.inc"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="255"/>
+        <CursorPos X="8" Y="272"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="10" HistoryIndex="9">
+      <Position1>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="8" Column="15" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="15" Column="8" TopLine="1"/>
+      </Position2>
+      <Position3>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="9" Column="23" TopLine="1"/>
+      </Position3>
+      <Position4>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="19" Column="23" TopLine="2"/>
+      </Position4>
+      <Position5>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="14" Column="15" TopLine="1"/>
+      </Position5>
+      <Position6>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="17" Column="15" TopLine="4"/>
+      </Position6>
+      <Position7>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="27" Column="12" TopLine="6"/>
+      </Position7>
+      <Position8>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="20" Column="34" TopLine="4"/>
+      </Position8>
+      <Position9>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="28" Column="52" TopLine="9"/>
+      </Position9>
+      <Position10>
+        <Filename Value="wrapper7z.lpr"/>
+        <Caret Line="27" Column="35" TopLine="11"/>
+      </Position10>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>
