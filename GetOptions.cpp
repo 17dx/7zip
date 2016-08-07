@@ -134,8 +134,8 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         argCount=argc;
         argv=argv_;
 
-        // bool IsFindOpitonL = false;
-        //bool IsFindOpitonM = false;
+        IsFindOpitonL = false;
+        IsFindOpitonM = false;
 
         range="0-9";
         arhiveName="test.zip" ;

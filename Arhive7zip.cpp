@@ -4,6 +4,7 @@
 #include <fstream> //для ifstream
 #include <stdlib.h> //для system
 
+
 using std::cout;
 using std::endl;
 
@@ -50,3 +51,43 @@ bool CArhive7zip::FindPassword(CGenPassword& genPassword){
   while( genPassword.Next() );
   return false;
 }
+
+
+CArhiveWrapper7zip::CArhiveWrapper7zip( string& pArhiveName,string& path7zip_):CArhive7zip(pArhiveName, path7zip_){
+    HINSTANCE hDllInstance = LoadLibrary("wrapper7z.dll");
+ 
+    if (hDllInstance == NULL){
+        cout << "error load wrapper7z.dll" << endl;
+        throw ex_error_load_7zdll();
+    }
+ 
+    fUnzip = (FUnzip)GetProcAddress(hDllInstance, "Unzip");
+ 
+    if (fUnzip == NULL){
+        cout << "error load function Unzip from wrapper7z.dll" << endl;
+        throw ex_error_load_Unzip_from_7zdll();
+    }
+    
+    FOpenArhive OpenArhive = (FOpenArhive)GetProcAddress(hDllInstance, "OpenArhive");
+    if (OpenArhive == NULL){
+        cout << "error load function OpenArhive from wrapper7z.dll" << endl;
+        throw ex_error_load_OpenArhive_from_7zdll();
+    }
+    else {
+      OpenArhive(pArhiveName.c_str());
+    }
+
+}
+
+bool CArhiveWrapper7zip::Unzip(string& password){
+   int result = fUnzip(password.c_str());
+   if (result==ERROR_ARHIVE_NOT_OPEN){
+      throw ex_logical_error_ArhiveNotOpen_in_7zdll();
+   }
+   return (result==SUCCESS_UNZIP);
+}
+
+CArhiveWrapper7zip::~CArhiveWrapper7zip(){
+   FreeLibrary(hDllInstance);
+}
+

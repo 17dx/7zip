@@ -42,14 +42,20 @@ int  main(int argc, char* argv[])
     catch(...){
       ExitProg();
     }
-    CArhive7zip arhive7zip(options->arhiveName,options->path7zip);
+    CArhive7zip* arhive7zip;
+    try{
+      arhive7zip= new CArhiveWrapper7zip(options->arhiveName,options->path7zip);
+    }
+    catch(...){
+      ExitProg();
+    }
     CGenPassword * genPassword = GetObjGenPassword(options);
     
     
     time_t tStart, tEnd;
     time(&tStart); // получаем время начала работы программы
 
-    if (not arhive7zip.FindPassword(*genPassword)){
+    if (not arhive7zip->FindPassword(*genPassword)){
        cout<< "password not found "<< endl;
     };
     time(&tEnd);  // получаем время конца работы программы
