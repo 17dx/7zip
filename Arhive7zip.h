@@ -24,7 +24,7 @@ class ex_logical_error_ArhiveNotOpen_in_7zdll : public std::exception{};
 */
 const int  SUCCESS_UNZIP=1;
 const int  NOT_SUCCESS_UNZIP=0;
-const int  ERROR_ARHIVE_NOT_OPEN=-1; 
+const int  ERROR_ARHIVE_NOT_OPEN=2; 
 
 typedef int (__stdcall *FUnzip)( const char * );
 typedef void (__stdcall *FOpenArhive)( const char * );
@@ -32,20 +32,21 @@ typedef void (__stdcall *FOpenArhive)( const char * );
 class CArhive7zip {
 public:
   
-  CArhive7zip( string& pArhiveName,string& path7zip_);
+  CArhive7zip( string& pArhiveName,string& path7zip_,bool verbose_);
   virtual bool Unzip(string& password);
   bool FindPassword(CGenPassword& genPassword);
-private:
+protected:
   string path7zip;
   string arhiveName;  
   string textout ; 
   string sFind  ;
+  bool verbose;
 };
 
 class CArhiveWrapper7zip :public CArhive7zip{
 public:
   
-  CArhiveWrapper7zip( string& pArhiveName,string& path7zip_);
+  CArhiveWrapper7zip( string& pArhiveName,string& path7zip_,bool verbose_);
   bool Unzip(string& password);
   ~CArhiveWrapper7zip();
 private:

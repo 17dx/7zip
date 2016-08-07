@@ -95,9 +95,14 @@ void CGetOptions::registerAllOptions(){
                       NULL);                       
                       
    propOptions.registerOption( "-a",
-                      &path7zip,
+                      &arhiveName,
                       " -a name    - archive name, default: test.zip\n",
                       NULL);  
+                      
+   propOptions.registerOption( "-v",
+                      NULL,
+                      " -v         - verbose\n",
+                      &IsFindOpitonV);                       
 
 }
 
@@ -136,6 +141,7 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
 
         IsFindOpitonL = false;
         IsFindOpitonM = false;
+        IsFindOpitonV = false;
 
         range="0-9";
         arhiveName="test.zip" ;
@@ -148,12 +154,21 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
 
         for (int i=0; i < argc; i+=1){
               string opt = argv[i];
+              string argValue;
+              bool OptAndArgumTogether = (opt.length() >2);
+              
+              if (OptAndArgumTogether){
+                  argValue=opt.substr(2,opt.length()-2);
+                  opt=opt.substr(0, 2);
+              }
               if (propOptions.OptionIsRegistered(opt) ){
+                 propOptions.SetIsFind(opt);
                  if (propOptions.NeedArgum(opt) ) {
-                 
-                   string argValue=getNextArgAsString(i);
+                   if (not OptAndArgumTogether){
+                      argValue=getNextArgAsString(i);
+                   }               
                    propOptions.SetArgum(opt,argValue) ;                
-                 }
+                 }                 
               }
         }
         

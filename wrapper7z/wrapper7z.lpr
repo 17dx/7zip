@@ -3,25 +3,24 @@ library wrapper7z;
 {$mode objfpc}{$H+}
 
 uses
-  Classes,sevenzip;
+  Classes,sevenzip,windows;
 const SUCCESS_UNZIP=1;
       NOT_SUCCESS_UNZIP=0;
-      ERROR_ARHIVE_NOT_OPEN=-1;
+      ERROR_ARHIVE_NOT_OPEN=2;
 
 var Archivery:I7zInArchive ;
     lastArhiveName:string;
-    ArhiveNameIsOpen:boolean;
-function Unzip( pPassword: pChar):integer; stdcall;
+    ArhiveNameIsOpen:boolean=false;
+function Unzip( pPassword: PChar):integer; stdcall;
 begin
-  if ArhiveNameIsOpen then begin
+  if not ArhiveNameIsOpen then begin
       result:=ERROR_ARHIVE_NOT_OPEN;
       exit;
   end;
-
   with Archivery do
   begin
     (Archivery as IResultStatus).ClearStatusResult(); //сброс состояния ошибки
-    SetPassword(string(pPassword));
+    SetPassword((pPassword));
     ExtractTo('test');
     if ((Archivery as IResultStatus).OperationIsSuccess()) then
      result:= SUCCESS_UNZIP
@@ -37,16 +36,19 @@ begin
       if lastArhiveName<>'' then begin
          Archivery.Close;
       end;
-      Archivery.OpenFile(string(arhiveName));
+      Archivery.OpenFile(arhiveName);
       lastArhiveName:=ArhiveName ;
   end;
   ArhiveNameIsOpen:=true;
 end;
 
+
+
+
 exports
   Unzip, OpenArhive;
 begin
   Archivery:=CreateInArchive(CLSID_CFormatZip);
-  ArhiveNameIsOpen:=false;
+  //ArhiveNameIsOpen:=false;
 end.
 

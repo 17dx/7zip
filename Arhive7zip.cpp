@@ -9,11 +9,11 @@ using std::cout;
 using std::endl;
 
 // конструктор с параметром
-CArhive7zip::CArhive7zip( string& pArhiveName,string& path7zip_){
+CArhive7zip::CArhive7zip( string& pArhiveName,string& path7zip_,bool verbose_){
     //path7zip = "C:\\Program Files\\7-Zip\\7z.exe";
     path7zip = path7zip_;
     arhiveName = pArhiveName; 
-    
+    verbose = verbose_;
     textout = "out.txt";
     sFind = "Wrong password"; //искомая строка в выводе
 }
@@ -42,8 +42,10 @@ bool CArhive7zip::Unzip(string& password){
 
 bool CArhive7zip::FindPassword(CGenPassword& genPassword){
   do{
-     cout<< genPassword.password<< endl; 
-     if ( Unzip(genPassword.password) ){
+     if (verbose){
+         cout<< genPassword.password<< endl; 
+     }
+     if ( Unzip(genPassword.password) ){        
         cout<< "password found: "<< genPassword.password << endl;
         return true; 
      };
@@ -53,7 +55,9 @@ bool CArhive7zip::FindPassword(CGenPassword& genPassword){
 }
 
 
-CArhiveWrapper7zip::CArhiveWrapper7zip( string& pArhiveName,string& path7zip_):CArhive7zip(pArhiveName, path7zip_){
+CArhiveWrapper7zip::CArhiveWrapper7zip( string& pArhiveName,string& path7zip_, bool verbose_):
+ CArhive7zip(pArhiveName, path7zip_, verbose_)
+{
     HINSTANCE hDllInstance = LoadLibrary("wrapper7z.dll");
  
     if (hDllInstance == NULL){
@@ -80,8 +84,9 @@ CArhiveWrapper7zip::CArhiveWrapper7zip( string& pArhiveName,string& path7zip_):C
 }
 
 bool CArhiveWrapper7zip::Unzip(string& password){
-   int result = fUnzip(password.c_str());
+   int result = fUnzip(password.c_str()); 
    if (result==ERROR_ARHIVE_NOT_OPEN){
+      cout << "logical error in wrapper7z.dll: Arhive not open" << endl;
       throw ex_logical_error_ArhiveNotOpen_in_7zdll();
    }
    return (result==SUCCESS_UNZIP);

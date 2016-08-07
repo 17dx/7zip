@@ -32,6 +32,7 @@ public:
   bool NeedArgum(string& option);
   bool OptionIsRegistered(string& option);
   void SetArgum(string&  option,string& value);
+  void SetIsFind(string&  option);
   void GetHelpMessages(string& msg);
 };
 

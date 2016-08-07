@@ -25,11 +25,15 @@ void CPropOptions::GetHelpMessages(string& msg){
 
 }
 
-void CPropOptions::SetArgum(string&  option,string& value){  
-  *(items[option].valueString )=value;
+void CPropOptions::SetIsFind(string&  option){  
   if (items[option].isFind != NULL){
     *(items[option].isFind)=true;  
   }
+}
+
+void CPropOptions::SetArgum(string&  option,string& value){  
+  *(items[option].valueString )=value;
+
 }
 
 bool CPropOptions::NeedArgum(string&  option){

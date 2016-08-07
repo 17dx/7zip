@@ -35,32 +35,24 @@ CGenPassword * GetObjGenPassword(CGetOptions * options){
 
 int  main(int argc, char* argv[])
 {   
-    CGetOptions * options;
+    
     try{
-      options=new CGetOptions(argc,  argv); 
+        CGetOptions  options(argc,  argv); 
+        CArhiveWrapper7zip arhive7zip(options.arhiveName,options.path7zip,options.IsFindOpitonV);
+        CGenPassword * genPassword = GetObjGenPassword(&options);
+                
+        time_t tStart, tEnd;
+        time(&tStart); // получаем время начала работы программы
+        if (not arhive7zip.FindPassword(*genPassword)){
+           cout<< "password not found "<< endl;
+        };
+        time(&tEnd);  // получаем время конца работы программы
+        double seconds = difftime(tEnd, tStart);
+        cout<< "elapsed time: "<< seconds << " sec"<<endl;
     }
     catch(...){
       ExitProg();
     }
-    CArhive7zip* arhive7zip;
-    try{
-      arhive7zip= new CArhiveWrapper7zip(options->arhiveName,options->path7zip);
-    }
-    catch(...){
-      ExitProg();
-    }
-    CGenPassword * genPassword = GetObjGenPassword(options);
-    
-    
-    time_t tStart, tEnd;
-    time(&tStart); // получаем время начала работы программы
-
-    if (not arhive7zip->FindPassword(*genPassword)){
-       cout<< "password not found "<< endl;
-    };
-    time(&tEnd);  // получаем время конца работы программы
-    double seconds = difftime(tEnd, tStart);
-    cout<< "elapsed time: "<< seconds << " sec"<<endl;
     cin.get();  
 	return 0;
 }

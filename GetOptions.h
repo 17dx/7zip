@@ -31,6 +31,7 @@ class CGetOptions{
 
    bool IsFindOpitonL;
    bool IsFindOpitonM;
+   bool IsFindOpitonV;
 
  private:
    int argCount;
