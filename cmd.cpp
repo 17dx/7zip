@@ -1,10 +1,10 @@
-//g++ PropOption.cpp GenPassword.cpp Arhive7zip.cpp GetOptions.cpp cmd.cpp -o cmd2
+﻿//g++ PropOption.cpp GenPassword.cpp FindPassword.cpp GetOptions.cpp cmd.cpp -o cmd2
  //-mric* -uIF -r "a-z" -v
 #include <iostream> //для  cout, cin
 #include <cstdlib> // для exit
 #include <ctime> //  для time
 #include "GetOptions.h"
-#include "Arhive7zip.h"
+#include "FindPassword.h"
 #include "GenPassword.h"
 
 using std::cout;

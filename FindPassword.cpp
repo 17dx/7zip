@@ -1,4 +1,4 @@
-#include "Arhive7zip.h"
+﻿#include "FindPassword.h"
 
 #include <iostream> //для  cout, cin
 #include <fstream> //для ifstream
