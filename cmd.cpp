@@ -23,8 +23,8 @@ void ExitProg(){
 CGenPassword * GetObjGenPassword(CGetOptions * options){
     CGenPassword * genPassword;
     try {
-        if (options->lengthPassword >0){
-           genPassword=new CGenPassword(options->lengthPassword,options->range);
+        if (options->IsFindOpitonL){
+           genPassword=new CGenPassword(options->sLengthPassword,options->range);
         }
         else {
            genPassword=new CGenPasswordOnMask(options->mask,options->range);
@@ -69,7 +69,7 @@ void ShowStat(){
 }
 
 void ShowLastPassword(){
-        cout<<"last password: " << genPassword->password<<endl;
+        cout<<"last password: \"" << genPassword->password<<"\"\n";
 }
 
 

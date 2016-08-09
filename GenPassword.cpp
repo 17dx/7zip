@@ -1,23 +1,41 @@
 #include "GenPassword.h"
 #include <sstream> // для stringstream
 #include <cmath> // для pow
+#include <cstdlib> //Для atoi
 
 //конструктор
 CGenPassword::CGenPassword(){
+  minLen=0;
+  maxLen=0;
+  stepOnLen=0; 
 }
 
-CGenPassword::CGenPassword(int len, string& range){
-  Init(len,range);
-  CreatePassword(); //создать начальный пароль
+CGenPassword::CGenPassword(string& lenRange, string& range){
+  ParseRangeLength (lenRange); 
+  Init(minLen,range);
+  numbPassword=0;
+  CreatePassword(); //создать начальный пароль  
 }
 
+
+void CGenPassword::ReInit(int len){ 
+  lenPassword=len;  
+  delete[] arr ;
+  arr = new char [lenPassword]; //выделяем память под массив
+  for(int i=0; i < lenPassword; i++){
+    arr[i]=minValue;
+  }  
+};
 
 //проинициализировать переменные
 // ::эта функция пригодится наследникам
-void CGenPassword::Init(int len, string& range){
+void CGenPassword::Init(int len, string& range){ 
   ParseRangeChar(range);
-  lenPassword=len;
-  numbPassword=0;
+  lenPassword=len; 
+  if (len==0) {
+       msgErr="little length password";
+       throw THROW_LITTLE_LENGTH_PASSWORD;
+  }
   arr = new char [lenPassword]; //выделяем память под массив
   for(int i=0; i < lenPassword; i++){
     arr[i]=minValue;
@@ -32,6 +50,48 @@ void CGenPassword::AppendRange(char firstChar,char lastChar){
        charRange.push_back(ch);       
     }  while(ch-lastChar !=0);
 }
+
+
+int CGenPassword::StringToInt(string  s){
+  int length=s.length();
+
+  for (int i=0; i<length; i++){
+    if (not isdigit(s[i]))
+    {
+       msgErr="no digital value by length password";
+       throw THROW_OPTION_NO_DIGITAL_ARGUMENT ;
+    }
+  }
+  return atoi(s.c_str());
+}
+
+void CGenPassword::ParseRangeLength(string& range){
+  minLen=0;
+  maxLen=0;
+  stepOnLen=0;
+  std::size_t pos= range.find("-"); 
+  if (pos == string::npos ){
+    minLen= StringToInt(range);
+    maxLen= minLen;
+  }
+  else{
+    if (pos == range.size()){
+       msgErr="no correct value range length password";
+       throw THROW_RANGE_LENGTH_NOT_VALID ;
+    }
+    else{
+        minLen= StringToInt(range.substr(0,pos));
+        maxLen= StringToInt(range.substr(pos+1));
+        stepOnLen=(maxLen-minLen > 0 ) ? 1: -1;        
+    }     
+  }  
+  
+  if (( minLen==0) && ( maxLen==0)) {
+       msgErr="little length password";
+       throw THROW_LITTLE_LENGTH_PASSWORD;
+  }
+  return ;
+};
     
 void CGenPassword::ParseRangeChar(string& range){
   std::stringstream ss(range);
@@ -49,7 +109,6 @@ void CGenPassword::ParseRangeChar(string& range){
     else if(item.length()==1)  {
        charRange.push_back(item[0]); 
     }
-
     
   }
   
@@ -71,7 +130,14 @@ CGenPassword::~CGenPassword(){
 //создать следующий пароль
 bool CGenPassword::Next(){
   if ( not Inc(lenPassword-1) ){
-    return false;
+    if (maxLen !=0 && lenPassword != maxLen){      
+      lenPassword+=stepOnLen;
+      ReInit(lenPassword);
+      return true;
+    }
+    else{
+      return false;
+    }  
   }
   CreatePassword();  
   return true;  
@@ -87,7 +153,17 @@ bool CGenPassword::Next(){
  }
  
  long CGenPassword::CountPasswords(){
-   return pow(charRange.size(),lenPassword);
+   if (maxLen !=0){
+       double count=0;
+       int i = minLen-stepOnLen;
+       do{
+           i+=stepOnLen;
+           count+=  pow(charRange.size(),i);       
+       }while (i != maxLen);
+       return  floor(count);
+   }
+    return  floor(pow(charRange.size(),lenPassword)); 
+   
  }
 
 //увеличить символ
@@ -129,7 +205,8 @@ bool CGenPassword::Inc(int index){
    }   
    Init(countStar, range); // создаем и инициализируем массив
    password=mask; 
-   CreatePassword();
+   numbPassword=0;
+   CreatePassword();   
  }
  
  void CGenPasswordOnMask::CreatePassword(){

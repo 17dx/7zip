@@ -22,7 +22,7 @@ void CGetOptions::printHelp()
 	//exit(0);
 }
 
-int CGetOptions::StringToInt(string & s,const char * option){
+/*int CGetOptions::StringToInt(string & s,const char * option){
   int length=s.length();
 
   for (int i=0; i<length; i++){
@@ -34,7 +34,7 @@ int CGetOptions::StringToInt(string & s,const char * option){
     }
   }
   return atoi(s.c_str());
-}
+}*/
 
 
 string CGetOptions::getNextArgAsString(int numArg){
@@ -123,12 +123,12 @@ void CGetOptions::TestResultParse(){
               //exit(0);
         }
         
-        if (IsFindOpitonL && (lengthPassword==0 )) {
+       /* if (IsFindOpitonL && (lengthPassword==0 )) {
               PrintMSG( "little length password","");
               throw ex_little_length_password() ;
               //throw THROW_LITTLE_LENGTH_PASSWORD;
               //exit(0);
-        }
+        }*/
 
         if (not IsFindOpitonL && not IsFindOpitonM ) {
               PrintMSG( "error required option -l or -m","");
@@ -164,7 +164,7 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         range="0-9";
         arhiveName="test.zip" ;
         path7zip="C:\\Program Files\\7-Zip\\7z.exe"; 
-        lengthPassword=0;
+        //lengthPassword=0;
         
         if (argCount < 2){
 	         printHelp(); // will not return
@@ -190,9 +190,9 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
               }
         }
         
-        if (IsFindOpitonL){
+        /*if (IsFindOpitonL){
            lengthPassword=StringToInt(sLengthPassword, "length password");
-        }
+        }*/
 
         TestResultParse();
 

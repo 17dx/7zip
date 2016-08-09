@@ -25,7 +25,7 @@ class CGetOptions{
    
    string range;
    string sLengthPassword;
-   int lengthPassword;
+   //int lengthPassword;
    string mask;
    string path7zip;// без кавычек
    string arhiveName;
@@ -46,7 +46,7 @@ class CGetOptions{
    void PrintMSG(const char  * cMsg1, const char  * cMsg2);   
    void printHelp();
    string getNextArgAsString(int numArg);
-   int StringToInt(string & s,const char * option);
+   //int StringToInt(string & s,const char * option);
    void registerAllOptions();
    void TestResultParse();
 };
