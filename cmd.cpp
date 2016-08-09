@@ -3,6 +3,7 @@
 #include <iostream> //для  cout, cin
 #include <cstdlib> // для exit
 #include <ctime> //  для time
+#include <cmath> // для %
 #include "GetOptions.h"
 #include "FindPassword.h"
 #include "GenPassword.h"
@@ -11,6 +12,8 @@ using std::cout;
 using std::endl;
 using std::cin;
 
+time_t tStart, tEnd;
+CGenPassword * genPassword =NULL;
 
 void ExitProg(){
   cin.get(); 
@@ -47,22 +50,56 @@ CFindPassword * GetObjFindPassword(CGetOptions * options){
     return findPassword;
 }
 
+void ShowStat(){
+        time(&tEnd);  // получаем время конца работы программы
+        double seconds = difftime(tEnd, tStart);
+        cout<< "elapsed time: ";
+        if (seconds>60){
+            cout<< int (seconds/60) << " min "<<endl;
+        }
+        cout<< (int(seconds) % 60 )<< " sec"<<endl;
+        
+        if (genPassword==NULL) return;
+        float speed=genPassword->numbPassword;
+        if (seconds!=0){
+            speed/=seconds ;
+        }
+   
+        cout<< "speed: "<< speed << " pasw/sec"<<endl;
+}
+
+void ShowLastPassword(){
+        cout<<"last password: " << genPassword->password<<endl;
+}
+
+
+BOOL WINAPI HandlerRoutine (DWORD dwCtrlType){
+  if (dwCtrlType==CTRL_C_EVENT){  
+     cout<<"interrupted by the user\n";
+     ShowLastPassword();
+     ShowStat();     
+     exit(0);
+     return true;
+  } 
+  return false;
+}
+
+
 int  main(int argc, char* argv[])
-{   
-    
+{       
+
+    SetConsoleCtrlHandler((PHANDLER_ROUTINE)HandlerRoutine, true);
+
     try{
         CGetOptions  options(argc,  argv); 
         CFindPassword * findPassword = GetObjFindPassword(&options);
-        CGenPassword * genPassword = GetObjGenPassword(&options);
-                
-        time_t tStart, tEnd;
+        genPassword = GetObjGenPassword(&options);
+                        
         time(&tStart); // получаем время начала работы программы
         if (not findPassword->DoFind(*genPassword)){
            cout<< "password not found "<< endl;
         };
-        time(&tEnd);  // получаем время конца работы программы
-        double seconds = difftime(tEnd, tStart);
-        cout<< "elapsed time: "<< seconds << " sec"<<endl;
+        ShowStat();
     }
     catch(...){
       ExitProg();
@@ -70,3 +107,4 @@ int  main(int argc, char* argv[])
     cin.get();  
 	return 0;
 }
+

@@ -39,7 +39,7 @@ bool CFindPassword::DoFind(CGenPassword& genPassword){
         }
      }
      if ( PasswordIsTrue(genPassword.password) ){        
-        cout<< "\npassword found: "<< genPassword.password << endl;
+        cout<< "\npassword found: \""<< genPassword.password <<"\""<< endl;
         return true; 
      };
   } 
