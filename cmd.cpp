@@ -55,7 +55,7 @@ void ShowStat(){
         double seconds = difftime(tEnd, tStart);
         cout<< "elapsed time: ";
         if (seconds>60){
-            cout<< int (seconds/60) << " min "<<endl;
+            cout<< int (seconds/60) << " min ";
         }
         cout<< (int(seconds) % 60 )<< " sec"<<endl;
         

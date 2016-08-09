@@ -152,7 +152,7 @@ bool CGenPassword::Next(){
    //password.append(arr, lenPassword);
  }
  
- long CGenPassword::CountPasswords(){
+ double CGenPassword::CountPasswords(){
    if (maxLen !=0){
        double count=0;
        int i = minLen-stepOnLen;
@@ -160,9 +160,9 @@ bool CGenPassword::Next(){
            i+=stepOnLen;
            count+=  pow(charRange.size(),i);       
        }while (i != maxLen);
-       return  floor(count);
+       return  ceil(count);
    }
-    return  floor(pow(charRange.size(),lenPassword)); 
+    return  ceil(pow(charRange.size(),lenPassword)); 
    
  }
 

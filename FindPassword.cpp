@@ -21,8 +21,8 @@ CFindPassword::CFindPassword(bool verbose_){
 
 
 bool CFindPassword::DoFind(CGenPassword& genPassword){
-  long countPasswords= genPassword.CountPasswords();
-  cout<<"count passwords:" << countPasswords<< endl; 
+  double countPasswords= genPassword.CountPasswords();
+  cout<<"count passwords:" << std::fixed<<std::setprecision(0)<< countPasswords<< endl; 
   int lastPercent =0;
   int percent=0;
   do{
@@ -31,7 +31,7 @@ bool CFindPassword::DoFind(CGenPassword& genPassword){
          cout<< genPassword.password<< endl; 
      }
      else{
-        percent = ((float)genPassword.numbPassword/countPasswords*100);
+        percent = (genPassword.numbPassword/countPasswords*100);
         if (percent>lastPercent){
            lastPercent=percent;
            cout << setfill(' ') << setw(3)<< percent;
