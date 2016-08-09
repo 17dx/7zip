@@ -1,4 +1,5 @@
 //g++ PropOption.cpp GenPassword.cpp Arhive7zip.cpp GetOptions.cpp cmd.cpp -o cmd2
+ //-mric* -uIF -r "a-z" -v
 #include <iostream> //для  cout, cin
 #include <cstdlib> // для exit
 #include <ctime> //  для time
@@ -33,17 +34,30 @@ CGenPassword * GetObjGenPassword(CGetOptions * options){
     return genPassword;
 }
 
+CFindPassword * GetObjFindPassword(CGetOptions * options){
+    CFindPassword * findPassword;
+
+        if (options->IsFindOpitonU ){
+           findPassword=new CUserLogon(options->userName,options->IsFindOpitonV);
+        }
+        else {
+           findPassword=new CArhiveWith_Dll7z(options->arhiveName,options->IsFindOpitonV);;
+        }
+
+    return findPassword;
+}
+
 int  main(int argc, char* argv[])
 {   
     
     try{
         CGetOptions  options(argc,  argv); 
-        CArhiveWrapper7zip arhive7zip(options.arhiveName,options.path7zip,options.IsFindOpitonV);
+        CFindPassword * findPassword = GetObjFindPassword(&options);
         CGenPassword * genPassword = GetObjGenPassword(&options);
                 
         time_t tStart, tEnd;
         time(&tStart); // получаем время начала работы программы
-        if (not arhive7zip.FindPassword(*genPassword)){
+        if (not findPassword->DoFind(*genPassword)){
            cout<< "password not found "<< endl;
         };
         time(&tEnd);  // получаем время конца работы программы

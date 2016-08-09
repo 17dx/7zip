@@ -96,8 +96,17 @@ void CGetOptions::registerAllOptions(){
                       
    propOptions.registerOption( "-a",
                       &arhiveName,
-                      " -a name    - archive name, default: test.zip\n",
-                      NULL);  
+                      " -a name    - archive name,option not compatible with -u,\n"
+                      "              default the option is enabled with \n"
+                      "              [archive name]=test.zip \n",                      
+                      &IsFindOpitonA);  
+
+   propOptions.registerOption( "-u",
+                      &userName,
+                      " -u name   - User name from local system,\n"
+                      "             option not compatible with -a"
+                      "             default the option is disabled",
+                      &IsFindOpitonU);                        
                       
    propOptions.registerOption( "-v",
                       NULL,
@@ -127,9 +136,16 @@ void CGetOptions::TestResultParse(){
               //throw THROW_REQUIRED_OPTION_L_OR_M;
               //exit(0);
         }
+        if (IsFindOpitonA && IsFindOpitonU ) {
+              PrintMSG( "error option -a not compatible with  option -u","");
+              throw ex_option_a_with_u();
 
-        CheckExistFile(path7zip);
-        CheckExistFile(arhiveName);
+        }
+        
+        if (not IsFindOpitonU){
+            CheckExistFile(path7zip);
+            CheckExistFile(arhiveName);
+        }
 
 }
 
@@ -139,9 +155,11 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         argCount=argc;
         argv=argv_;
 
-        IsFindOpitonL = false;
+        /*IsFindOpitonL = false;
         IsFindOpitonM = false;
         IsFindOpitonV = false;
+        IsFindOpitonA = false;
+        IsFindOpitonU = false;  инициализируются в регистраторе  */    
 
         range="0-9";
         arhiveName="test.zip" ;

@@ -29,29 +29,46 @@ const int  ERROR_ARHIVE_NOT_OPEN=2;
 typedef int (__stdcall *FUnzip)( const char * );
 typedef void (__stdcall *FOpenArhive)( const char * );
 
-class CArhive7zip {
-public:
-  
-  CArhive7zip( string& pArhiveName,string& path7zip_,bool verbose_);
-  virtual bool Unzip(string& password);
-  bool FindPassword(CGenPassword& genPassword);
+class CFindPassword {
+public:  
+  CFindPassword( bool verbose_);
+  virtual bool PasswordIsTrue(string& password)=0;
+  bool DoFind(CGenPassword& genPassword);
+  virtual ~CFindPassword();
 protected:
-  string path7zip;
-  string arhiveName;  
-  string textout ; 
-  string sFind  ;
   bool verbose;
 };
 
-class CArhiveWrapper7zip :public CArhive7zip{
+class CArhiveConsole7z:public CFindPassword {
 public:
   
-  CArhiveWrapper7zip( string& pArhiveName,string& path7zip_,bool verbose_);
-  bool Unzip(string& password);
-  ~CArhiveWrapper7zip();
+  CArhiveConsole7z( string& pArhiveName,string& path7zip_,bool verbose_);
+  virtual bool PasswordIsTrue(string& password);
+protected:
+  string path7zip;
+  string arhiveName;
+  string textout ; 
+  string sFind  ;  
+};
+
+class CArhiveWith_Dll7z :public CFindPassword{
+public:
+  
+  CArhiveWith_Dll7z( string& pArhiveName,bool verbose_);
+  bool PasswordIsTrue(string& password);
+  ~CArhiveWith_Dll7z();
 private:
+  string arhiveName;  
   FUnzip fUnzip;
   HINSTANCE hDllInstance ;
+};
+
+class CUserLogon :public CFindPassword{
+public:  
+  CUserLogon( string& pUserName,bool verbose_);
+  bool PasswordIsTrue(string& password);
+private:
+  const char * userName;  
 };
 
 #endif // ARHIVE7ZIP_H

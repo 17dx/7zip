@@ -8,18 +8,42 @@
 using std::cout;
 using std::endl;
 
+CFindPassword::CFindPassword(bool verbose_){
+    verbose = verbose_;
+}
+
+ CFindPassword::~CFindPassword(){
+}
+
+
+bool CFindPassword::DoFind(CGenPassword& genPassword){
+  do{
+     if (verbose){
+         cout<< genPassword.password<< endl; 
+     }
+     if ( PasswordIsTrue(genPassword.password) ){        
+        cout<< "password found: "<< genPassword.password << endl;
+        return true; 
+     };
+  } 
+  while( genPassword.Next() );
+  return false;
+}
+
+
 // конструктор с параметром
-CArhive7zip::CArhive7zip( string& pArhiveName,string& path7zip_,bool verbose_){
+CArhiveConsole7z::CArhiveConsole7z( string& pArhiveName,string& path7zip_,bool verbose_):
+  CFindPassword( verbose_)
+{
     //path7zip = "C:\\Program Files\\7-Zip\\7z.exe";
     path7zip = path7zip_;
     arhiveName = pArhiveName; 
-    verbose = verbose_;
     textout = "out.txt";
     sFind = "Wrong password"; //искомая строка в выводе
 }
 
 // функция запуска 7zip и проверки правильности пароля
-bool CArhive7zip::Unzip(string& password){
+bool CArhiveConsole7z::PasswordIsTrue(string& password){
     bool result = true; 
     string cmdLine = "\"" + path7zip + "\""  + " e " + arhiveName + 
                      " -p" + password + " -y >" +textout  + " 2>&1";;
@@ -40,24 +64,12 @@ bool CArhive7zip::Unzip(string& password){
     return result;
 }
 
-bool CArhive7zip::FindPassword(CGenPassword& genPassword){
-  do{
-     if (verbose){
-         cout<< genPassword.password<< endl; 
-     }
-     if ( Unzip(genPassword.password) ){        
-        cout<< "password found: "<< genPassword.password << endl;
-        return true; 
-     };
-  } 
-  while( genPassword.Next() );
-  return false;
-}
 
 
-CArhiveWrapper7zip::CArhiveWrapper7zip( string& pArhiveName,string& path7zip_, bool verbose_):
- CArhive7zip(pArhiveName, path7zip_, verbose_)
+CArhiveWith_Dll7z::CArhiveWith_Dll7z( string& pArhiveName, bool verbose_):
+ CFindPassword( verbose_)
 {
+    arhiveName = pArhiveName; 
     HINSTANCE hDllInstance = LoadLibrary("wrapper7z.dll");
  
     if (hDllInstance == NULL){
@@ -83,7 +95,7 @@ CArhiveWrapper7zip::CArhiveWrapper7zip( string& pArhiveName,string& path7zip_, b
 
 }
 
-bool CArhiveWrapper7zip::Unzip(string& password){
+bool CArhiveWith_Dll7z::PasswordIsTrue(string& password){
    int result = fUnzip(password.c_str()); 
    if (result==ERROR_ARHIVE_NOT_OPEN){
       cout << "logical error in wrapper7z.dll: Arhive not open" << endl;
@@ -92,7 +104,20 @@ bool CArhiveWrapper7zip::Unzip(string& password){
    return (result==SUCCESS_UNZIP);
 }
 
-CArhiveWrapper7zip::~CArhiveWrapper7zip(){
+CArhiveWith_Dll7z::~CArhiveWith_Dll7z(){
    FreeLibrary(hDllInstance);
 }
 
+CUserLogon::CUserLogon(string& pUserName,bool verbose_):CFindPassword( verbose_)
+{
+    userName=pUserName.c_str();
+}
+
+bool CUserLogon::PasswordIsTrue(string& password){
+  //PHANDLE phToken;
+  HANDLE  hToken;
+  return (LogonUser((LPSTR)userName,NULL,(LPSTR)password.c_str(),
+               LOGON32_LOGON_SERVICE,
+               LOGON32_PROVIDER_DEFAULT,
+               &hToken) !=0);
+}

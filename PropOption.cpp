@@ -9,7 +9,9 @@ void CPropOptions::registerOption( const char * option,
     propOption.valueString= valueString;
     propOption.helpMsg=     helpMsg;
     propOption.isFind=       isFind;
-    
+    if (isFind != NULL){
+       *(isFind)=false;  // по умолчанию
+    }
     
     items.insert(pair<string,SPropOption> (string(option),propOption));
 }

@@ -10,6 +10,7 @@ using std::string;
 class ex_file_not_found : public std::exception{};
 class ex_invalid_arguments : public std::exception{};
 class ex_option_l_with_m: public std::exception{};
+class ex_option_a_with_u: public std::exception{};
 class ex_option_no_digital_argument : public std::exception{};
 class ex_little_option : public std::exception{};
 class ex_skip_argument  : public std::exception{};
@@ -28,10 +29,13 @@ class CGetOptions{
    string mask;
    string path7zip;// без кавычек
    string arhiveName;
+   string userName;
 
    bool IsFindOpitonL;
    bool IsFindOpitonM;
    bool IsFindOpitonV;
+   bool IsFindOpitonA;
+   bool IsFindOpitonU;
 
  private:
    int argCount;
