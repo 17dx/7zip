@@ -1,5 +1,6 @@
 #include "GenPassword.h"
 #include <sstream> // для stringstream
+#include <cmath> // для pow
 
 //конструктор
 CGenPassword::CGenPassword(){
@@ -10,11 +11,13 @@ CGenPassword::CGenPassword(int len, string& range){
   CreatePassword(); //создать начальный пароль
 }
 
+
 //проинициализировать переменные
 // ::эта функция пригодится наследникам
 void CGenPassword::Init(int len, string& range){
   ParseRangeChar(range);
   lenPassword=len;
+  numbPassword=0;
   arr = new char [lenPassword]; //выделяем память под массив
   for(int i=0; i < lenPassword; i++){
     arr[i]=minValue;
@@ -76,10 +79,15 @@ bool CGenPassword::Next(){
 
  void CGenPassword::CreatePassword(){
    password="";
+   numbPassword++;
    for(int i = 0; i < lenPassword; i++){
      password+=charRange[arr[i]];
    }
    //password.append(arr, lenPassword);
+ }
+ 
+ long CGenPassword::CountPasswords(){
+   return pow(charRange.size(),lenPassword);
  }
 
 //увеличить символ
@@ -125,6 +133,7 @@ bool CGenPassword::Inc(int index){
  }
  
  void CGenPasswordOnMask::CreatePassword(){
+   numbPassword++;
    for(int i = 0; i < lenPassword; i++){
      password[posStar[i]]=charRange[arr[i]];
    }

@@ -18,10 +18,12 @@ public:
   void Init(int len, string& range);
   bool Next();
   virtual void CreatePassword();
+  long CountPasswords();
   string  msgErr;
+  long numbPassword;
 protected:
   char minValue;
-  char maxValue;
+  char maxValue;  
   vector<char> charRange;
   int lenPassword;
   char* arr; //динамический массив из  чисел

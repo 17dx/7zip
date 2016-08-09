@@ -1,12 +1,16 @@
 ﻿#include "FindPassword.h"
 
 #include <iostream> //для  cout, cin
+#include <iomanip>      // std::setfill, std::setw
 #include <fstream> //для ifstream
 #include <stdlib.h> //для system
 
 
 using std::cout;
 using std::endl;
+
+using std::setfill;
+ using std::setw;
 
 CFindPassword::CFindPassword(bool verbose_){
     verbose = verbose_;
@@ -17,12 +21,25 @@ CFindPassword::CFindPassword(bool verbose_){
 
 
 bool CFindPassword::DoFind(CGenPassword& genPassword){
+  long countPasswords= genPassword.CountPasswords();
+  cout<<"count passwords:" << countPasswords<< endl; 
+  int lastPercent =0;
+  int percent=0;
   do{
+     
      if (verbose){
          cout<< genPassword.password<< endl; 
      }
+     else{
+        percent = ((float)genPassword.numbPassword/countPasswords*100);
+        if (percent>lastPercent){
+           lastPercent=percent;
+           cout << setfill(' ') << setw(3)<< percent;
+           cout << "% :: " << genPassword.password << "\r";
+        }
+     }
      if ( PasswordIsTrue(genPassword.password) ){        
-        cout<< "password found: "<< genPassword.password << endl;
+        cout<< "\npassword found: "<< genPassword.password << endl;
         return true; 
      };
   } 
