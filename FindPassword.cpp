@@ -20,7 +20,7 @@ CFindPassword::CFindPassword(bool verbose_){
 }
 
 
-bool CFindPassword::DoFind(CGenPassword& genPassword){
+bool CFindPassword::DoFind(CAbstractGenPassword& genPassword){
   double countPasswords= genPassword.CountPasswords();
   cout<<"count passwords:" << std::fixed<<std::setprecision(0)<< countPasswords<< endl; 
   int lastPercent =0;
@@ -39,7 +39,7 @@ bool CFindPassword::DoFind(CGenPassword& genPassword){
         }
      }
      if ( PasswordIsTrue(genPassword.password) ){        
-        cout<< "\npassword found: \""<< genPassword.password <<"\""<< endl;
+        cout<< "\npassword found: \""<< genPassword.password <<"\"                  "<< endl;
         return true; 
      };
   } 
@@ -133,8 +133,11 @@ CUserLogon::CUserLogon(string& pUserName,bool verbose_):CFindPassword( verbose_)
 bool CUserLogon::PasswordIsTrue(string& password){
   //PHANDLE phToken;
   HANDLE  hToken;
-  return (LogonUser((LPSTR)userName,NULL,(LPSTR)password.c_str(),
+  
+  bool result=(LogonUser((LPSTR)userName,NULL,(LPSTR)password.c_str(),
                LOGON32_LOGON_SERVICE,
                LOGON32_PROVIDER_DEFAULT,
                &hToken) !=0);
+  CloseHandle(hToken);             
+  return result;
 }

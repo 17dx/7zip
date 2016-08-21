@@ -33,7 +33,7 @@ class CFindPassword {
 public:  
   CFindPassword( bool verbose_);
   virtual bool PasswordIsTrue(string& password)=0;
-  bool DoFind(CGenPassword& genPassword);
+  bool DoFind(CAbstractGenPassword& genPassword);
   virtual ~CFindPassword();
 protected:
   bool verbose;

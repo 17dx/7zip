@@ -79,14 +79,21 @@ void CGetOptions::registerAllOptions(){
                       
   propOptions.registerOption( "-l",
                       &sLengthPassword,
-                      " -l length  - length password, not compatible with -m\n",
+                      " -l length  - length password, not compatible with -m and -d \n",
                       &IsFindOpitonL);
                       
   propOptions.registerOption( "-m",
                       &mask,
-                      " -m mask    - mask for password, not compatible with -l, \n"
+                      " -m mask    - mask for password, not compatible with -l and -d, \n"
                       "              for example: \"ma*k\"\n",
                       &IsFindOpitonM); 
+                      
+  propOptions.registerOption( "-d",
+                      &dicPath,
+                      " -d path    - path to dictionary, not compatible with -l and -m, \n"
+                      "              for example: \"dic.txt\"\n"
+                      "              behavior modification using option -t \n",
+                      &IsFindOpitonD);                       
                       
    propOptions.registerOption( "-z",
                       &path7zip,
@@ -104,20 +111,27 @@ void CGetOptions::registerAllOptions(){
    propOptions.registerOption( "-u",
                       &userName,
                       " -u name   - User name from local system,\n"
-                      "             option not compatible with -a"
-                      "             default the option is disabled",
-                      &IsFindOpitonU);                        
+                      "             option not compatible with -a\n"
+                      "             default the option is disabled\n",
+                      &IsFindOpitonU); 
+                      
+  propOptions.registerOption( "-t",
+                      &translitType,
+                      " -t  type   - translit word from dictionary, used with option -d\n"
+                      "              available types: both and only\n",
+                      &IsFindOpitonT);   
                       
    propOptions.registerOption( "-v",
                       NULL,
                       " -v         - verbose\n",
-                      &IsFindOpitonV);                       
+                      &IsFindOpitonV);   
+                    
 
 }
 
 void CGetOptions::TestResultParse(){
-        if (IsFindOpitonL && IsFindOpitonM ) {
-              PrintMSG( "error option -l not compatible with  option -m","");
+        if (IsFindOpitonL && IsFindOpitonM && IsFindOpitonD) {
+              PrintMSG( "error options incompatible: -l and -m and -d","");
               throw ex_option_l_with_m();
               //throw THROW_OPTION_L_WITH_M;
               //exit(0);
@@ -130,8 +144,8 @@ void CGetOptions::TestResultParse(){
               //exit(0);
         }*/
 
-        if (not IsFindOpitonL && not IsFindOpitonM ) {
-              PrintMSG( "error required option -l or -m","");
+        if (not IsFindOpitonL && not IsFindOpitonM && not IsFindOpitonD) {
+              PrintMSG( "error required option -l or -m or -d","");
               throw ex_required_option_l_or_m ();
               //throw THROW_REQUIRED_OPTION_L_OR_M;
               //exit(0);

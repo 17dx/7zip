@@ -1,9 +1,17 @@
 #include "GenPassword.h"
-#include <sstream> // РґР»СЏ stringstream
-#include <cmath> // РґР»СЏ pow
-#include <cstdlib> //Р”Р»СЏ atoi
+#include <sstream> // для stringstream
+#include <cmath> // для pow
+#include <cstdlib> //Для atoi
 
-//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+CAbstractGenPassword::CAbstractGenPassword(){
+     codeError=ERROR_NONE;
+}
+
+int CAbstractGenPassword::LastError(){
+  return codeError;
+};
+
+//конструктор
 CGenPassword::CGenPassword(){
   minLen=0;
   maxLen=0;
@@ -14,29 +22,31 @@ CGenPassword::CGenPassword(string& lenRange, string& range){
   ParseRangeLength (lenRange); 
   Init(minLen,range);
   numbPassword=0;
-  CreatePassword(); //СЃРѕР·РґР°С‚СЊ РЅР°С‡Р°Р»СЊРЅС‹Р№ РїР°СЂРѕР»СЊ  
+  CreatePassword(); //создать начальный пароль  
 }
 
 
 void CGenPassword::ReInit(int len){ 
   lenPassword=len;  
   delete[] arr ;
-  arr = new char [lenPassword]; //РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ РјР°СЃСЃРёРІ
+  arr = new char [lenPassword]; //выделяем память под массив
   for(int i=0; i < lenPassword; i++){
     arr[i]=minValue;
   }  
 };
 
-//РїСЂРѕРёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ РїРµСЂРµРјРµРЅРЅС‹Рµ
-// ::СЌС‚Р° С„СѓРЅРєС†РёСЏ РїСЂРёРіРѕРґРёС‚СЃСЏ РЅР°СЃР»РµРґРЅРёРєР°Рј
+//проинициализировать переменные
+// ::эта функция пригодится наследникам
 void CGenPassword::Init(int len, string& range){ 
   ParseRangeChar(range);
   lenPassword=len; 
   if (len==0) {
        msgErr="little length password";
-       throw THROW_LITTLE_LENGTH_PASSWORD;
+       codeError=ERROR_LITTLE_LENGTH_PASSWORD;
+       return ;
+       //throw THROW_LITTLE_LENGTH_PASSWORD;
   }
-  arr = new char [lenPassword]; //РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ РјР°СЃСЃРёРІ
+  arr = new char [lenPassword]; //выделяем память под массив
   for(int i=0; i < lenPassword; i++){
     arr[i]=minValue;
   }  
@@ -59,7 +69,9 @@ int CGenPassword::StringToInt(string  s){
     if (not isdigit(s[i]))
     {
        msgErr="no digital value by length password";
-       throw THROW_OPTION_NO_DIGITAL_ARGUMENT ;
+       codeError=ERROR_OPTION_NO_DIGITAL_ARGUMENT;
+       return 0;
+       //throw THROW_OPTION_NO_DIGITAL_ARGUMENT ;
     }
   }
   return atoi(s.c_str());
@@ -72,23 +84,32 @@ void CGenPassword::ParseRangeLength(string& range){
   std::size_t pos= range.find("-"); 
   if (pos == string::npos ){
     minLen= StringToInt(range);
+    if(LastError() != ERROR_NONE) return;
     maxLen= minLen;
   }
   else{
     if (pos == range.size()){
        msgErr="no correct value range length password";
-       throw THROW_RANGE_LENGTH_NOT_VALID ;
+       codeError=ERROR_RANGE_LENGTH_NOT_VALID;
+       return ;
+       //throw THROW_RANGE_LENGTH_NOT_VALID ;
     }
     else{
         minLen= StringToInt(range.substr(0,pos));
+        if(LastError() != ERROR_NONE) return;
+        
         maxLen= StringToInt(range.substr(pos+1));
+        if(LastError() != ERROR_NONE) return;
+        
         stepOnLen=(maxLen-minLen > 0 ) ? 1: -1;        
     }     
   }  
   
   if (( minLen==0) && ( maxLen==0)) {
        msgErr="little length password";
-       throw THROW_LITTLE_LENGTH_PASSWORD;
+       codeError=ERROR_LITTLE_LENGTH_PASSWORD;
+       return ;
+       //throw THROW_LITTLE_LENGTH_PASSWORD;
   }
   return ;
 };
@@ -101,8 +122,8 @@ void CGenPassword::ParseRangeChar(string& range){
   while (std::getline(ss, item, ',')){
     if(item.length()==3){
       if(item[1]=='-'){
-          firstChar = item[0]; // СЃ РєР°РєРѕРіРѕ СЃРёРјРІРѕР»Р° РЅР°С‡Р°С‚СЊ
-          lastChar = item[2]; //РєР°РєРёРј СЃРёРјРІРѕР»РѕРј Р·Р°РєРѕРЅС‡РёС‚СЊ   
+          firstChar = item[0]; // с какого символа начать
+          lastChar = item[2]; //каким символом закончить   
           AppendRange (firstChar,lastChar);         
       }
     } 
@@ -114,7 +135,9 @@ void CGenPassword::ParseRangeChar(string& range){
   
   if (charRange.size()==0){
      msgErr= "range char not valid";
-     throw THROW_RANGE_CHAR_NOT_VALID;
+     codeError=ERROR_RANGE_CHAR_NOT_VALID;
+     return ;
+     //throw THROW_RANGE_CHAR_NOT_VALID;
   }
   else{
     minValue=0;
@@ -122,17 +145,18 @@ void CGenPassword::ParseRangeChar(string& range){
   }
 };
 
-//РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+//деструктор
 CGenPassword::~CGenPassword(){
-  delete [] arr; //РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
+  delete [] arr; //освобождаем память
 }
 
-//СЃРѕР·РґР°С‚СЊ СЃР»РµРґСѓСЋС‰РёР№ РїР°СЂРѕР»СЊ
+//создать следующий пароль
 bool CGenPassword::Next(){
   if ( not Inc(lenPassword-1) ){
     if (maxLen !=0 && lenPassword != maxLen){      
       lenPassword+=stepOnLen;
       ReInit(lenPassword);
+      CreatePassword(); //проверить кажется был пропущен что приводит к двойно проверке последнего пароля
       return true;
     }
     else{
@@ -166,32 +190,32 @@ bool CGenPassword::Next(){
    
  }
 
-//СѓРІРµР»РёС‡РёС‚СЊ СЃРёРјРІРѕР»
+//увеличить символ
 bool CGenPassword::Inc(int index){
 
   if ( arr[index] == maxValue  ){
-     // РµСЃР»Рё РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ РЅРѕРјРµСЂ СЃРёРјРІРѕР»Р° РІ С‚РµРєСѓС‰РµР№ СЏС‡РµР№РєРµ
-     // С‚Рѕ РІ С‚РµРєСѓС‰РµР№ СЏС‡РµР№РєРµ РЅР°С‡Р°С‚СЊ СЃ РЅР°С‡Р°Р»Р°     
+     // если максимальный номер символа в текущей ячейке
+     // то в текущей ячейке начать с начала     
      arr[index] = minValue;
      
      if (index ==0){
-       //Р±РѕР»РµРµ СЃС‚Р°СЂС€РµРіРѕ СЂР°Р·СЂСЏРґР° РЅРµС‚, Р±РѕР»СЊС€Рµ СѓРІРµР»РёС‡РёРІР°С‚СЊ РЅРµР»СЊР·СЏ
+       //более старшего разряда нет, больше увеличивать нельзя
        return false;
      } 
      else{
-       //Р° РІ РїСЂРµРґС‹РґСѓС‰РµР№ СЏС‡РµР№РєРµ(РІ СЃС‚Р°СЂС€РµРј СЂР°Р·СЂСЏРґРµ) СѓРІРµР»РёС‡РёС‚СЊ СЃРёРјРІРѕР»
+       //а в предыдущей ячейке(в старшем разряде) увеличить символ
        return Inc(index-1);
      }     
   }
-  // РµСЃР»Рё РґРѕ СЃРёС… РїРѕСЂ С„СѓРЅРєС†РёСЏ РЅРµ Р·Р°РІРµСЂС€РёРЅР°,
-  //  С‚Рѕ РјРѕР¶РЅРѕ РїСЂРѕСЃС‚Рѕ СѓРІРµР»РёС‡РёС‚СЊ СЃРёРјРІРѕР»
+  // если до сих пор функция не завершина,
+  //  то можно просто увеличить символ
   arr[index]++;
   return true;
 
 }
 
 //////////////////////////////////////////////////////////////////
-//////////////////////РЅР°СЃР»РµРґРЅРёРє РєР»Р°СЃСЃР° GenPassword //////////////
+//////////////////////наследник класса GenPassword //////////////
 //////////////////////////////////////////////////////////////////
 
  CGenPasswordOnMask::CGenPasswordOnMask(string mask,string& range){
@@ -203,7 +227,7 @@ bool CGenPassword::Inc(int index){
           countStar++;
         }
    }   
-   Init(countStar, range); // СЃРѕР·РґР°РµРј Рё РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РјР°СЃСЃРёРІ
+   Init(countStar, range); // создаем и инициализируем массив
    password=mask; 
    numbPassword=0;
    CreatePassword();   
@@ -215,3 +239,145 @@ bool CGenPassword::Inc(int index){
      password[posStar[i]]=charRange[arr[i]];
    }
  }
+ 
+ //////////////////////////////////////////////////////////////////
+//////////////////////наследник класса CAbstractGenPassword //////////////
+//////////////////////////////////////////////////////////////////
+ 
+ CGenPasswordFromDict::CGenPasswordFromDict(string dicPath_,string translitType_){
+   dicPath= dicPath_;
+   if (translitType_== ""){    
+           translitType=TYPE_TRANSLIT_NONE;
+   } else if (translitType_== "both"){ 
+           translitType=TYPE_TRANSLIT_BOTH;
+   } else if (translitType_== "only"){    
+           translitType=TYPE_TRANSLIT_ONLY;
+   }else{
+       msgErr="invalid keyword by option -t";
+       codeError=ERROR_OPTION_NOT_VALID_KEYWORD;
+       return ;
+       //throw THROW_OPTION_NOT_VALID_KEYWORD;
+   }
+   
+   trInit();
+   fr.open( dicPath.c_str());
+  //todo fr.is_open?
+    CalcCountPassword();  
+   
+   numbPassword=0;
+   queueToTranslit=not DO_TRANSLIT;
+     
+   Next(); // todo обработать результат
+
+ }
+ 
+void  CGenPasswordFromDict::CalcCountPassword(){
+   countPasswords=0;
+   string tmp;
+   while(!fr.eof()){
+     std::getline(fr,tmp);
+     countPasswords++;
+   } 
+   fr.seekg(0);
+   if (translitType==TYPE_TRANSLIT_BOTH){
+      countPasswords*=2;
+   }
+}
+
+void CGenPasswordFromDict::trInit(){
+   for (int i=0 ;i<256;i++ ){
+     tr[i]=i;
+   }
+   tr['z']='я';  tr['Z']='Я';
+   tr['x']='ч';  tr['X']='Ч';
+   tr['c']='с';  tr['C']='С';
+   tr['v']='м';  tr['V']='М';
+   tr['b']='и';  tr['B']='И';
+   tr['n']='т';  tr['N']='Т';
+   tr['m']='ь';  tr['M']='Ь';
+   tr[',']='б';  tr['<']='Б';
+   tr['.']='ю';  tr['>']='Ю';
+   tr['/']='.';  tr['?']='.';
+   tr['a']='ф';  tr['A']='Ф';
+   tr['s']='ы';  tr['S']='Ы';
+   tr['d']='в';  tr['D']='В';
+   tr['f']='а';  tr['F']='А';
+   tr['g']='п';  tr['G']='П';
+   tr['h']='р';  tr['H']='Р';
+   tr['j']='о';  tr['J']='О';
+   tr['k']='л';  tr['K']='Л';
+   tr['l']='д';  tr['L']='Д';
+   tr[';']='ж';  tr[':']='Ж';
+   tr['\'']='э'; tr['"']='Э';
+   tr['q']='й';  tr['Q']='Й';
+   tr['w']='ц';  tr['W']='Ц';
+   tr['e']='у';  tr['E']='У';
+   tr['r']='к';  tr['R']='К';
+   tr['t']='е';  tr['T']='Е';
+   tr['y']='н';  tr['Y']='Н';
+   tr['u']='г';  tr['U']='Г';
+   tr['i']='ш';  tr['I']='Ш';
+   tr['o']='щ';  tr['O']='Щ';
+   tr['p']='з';  tr['P']='З';
+   tr['[']='х';  tr['{']='Х';
+   tr[']']='ъ';  tr['}']='Ъ';
+   tr['`']='ё';  tr['~']='Ё';
+                 tr['@']='"'; 
+                 tr['#']='№';  
+                 tr['$']=';';   
+                 tr['^']=':';
+                 tr['&']='?'; 
+                 tr['|']='/'; 
+}
+
+void CGenPasswordFromDict::TranslitPassword(){
+   int lenPassword=password.size();
+   for(int i=0 ; i<lenPassword; i++){
+      password[i]= tr[password[i]] ; 
+   } 
+ }
+ 
+bool  CGenPasswordFromDict::ReadNextPassword(){
+  if (!fr.eof()){
+         std::getline(fr,password);
+         numbPassword++;
+         return true;
+  } 
+  return false;
+ }
+ 
+ bool  CGenPasswordFromDict::Next(){
+   if (translitType==TYPE_TRANSLIT_NONE){
+     return ReadNextPassword();
+   }
+   else if (translitType==TYPE_TRANSLIT_ONLY ){
+      bool result = ReadNextPassword();
+      TranslitPassword();          
+      return result;      
+   }
+   else if (translitType==TYPE_TRANSLIT_BOTH ){ 
+           bool result =true;   
+           if (queueToTranslit==DO_TRANSLIT){                 
+                 TranslitPassword();
+                 numbPassword++;
+           }      
+           else{
+                result = ReadNextPassword();
+           }                 
+           queueToTranslit= not queueToTranslit;
+           //осуществляем чередование
+           return result;
+   }
+ 
+   return false;
+ }
+
+ double CGenPasswordFromDict::CountPasswords(){
+
+   return countPasswords;
+
+ }
+ 
+  CGenPasswordFromDict::~CGenPasswordFromDict(){
+    fr.close(); 
+  }

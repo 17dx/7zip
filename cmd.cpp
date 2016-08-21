@@ -13,24 +13,26 @@ using std::endl;
 using std::cin;
 
 time_t tStart, tEnd;
-CGenPassword * genPassword =NULL;
+CAbstractGenPassword * genPassword =NULL;
 
 void ExitProg(){
   cin.get(); 
   exit(0);
 }
 
-CGenPassword * GetObjGenPassword(CGetOptions * options){
-    CGenPassword * genPassword;
-    try {
+CAbstractGenPassword * GetObjGenPassword(CGetOptions * options){
+    CAbstractGenPassword * genPassword;
+    
         if (options->IsFindOpitonL){
            genPassword=new CGenPassword(options->sLengthPassword,options->range);
         }
-        else {
+        else if (options->IsFindOpitonM){
            genPassword=new CGenPasswordOnMask(options->mask,options->range);
-        }   
-    }
-    catch(int){
+        }  
+        else {
+           genPassword=new CGenPasswordFromDict(options->dicPath,options->translitType);
+        } 
+    if (genPassword->LastError() != ERROR_NONE){
        cout<< genPassword->msgErr<<  endl;
 	   ExitProg();
     }
@@ -97,7 +99,7 @@ int  main(int argc, char* argv[])
                         
         time(&tStart); // получаем время начала работы программы
         if (not findPassword->DoFind(*genPassword)){
-           cout<< "password not found "<< endl;
+           cout<< "password not found                       "<< endl;
         };
         ShowStat();
     }

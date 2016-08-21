@@ -27,15 +27,19 @@ class CGetOptions{
    string sLengthPassword;
    //int lengthPassword;
    string mask;
+   string dicPath;
    string path7zip;// без кавычек
    string arhiveName;
    string userName;
+   string translitType;
 
    bool IsFindOpitonL;
    bool IsFindOpitonM;
+   bool IsFindOpitonD;
    bool IsFindOpitonV;
    bool IsFindOpitonA;
    bool IsFindOpitonU;
+   bool IsFindOpitonT;
 
  private:
    int argCount;
