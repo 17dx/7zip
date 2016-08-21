@@ -250,13 +250,12 @@ bool CGenPassword::Inc(int index){
    translitType=translitType_;
    
    trInit();
-   fr.open( dicPath.c_str());
-  //todo fr.is_open?
-    CalcCountPassword();  
+   CalcCountPassword();  
    
    numbPassword=0;
    queueToTranslit=not DO_TRANSLIT;
-     
+   fr.open( dicPath.c_str());//раньше открывать файл нельзя  
+   //todo fr.is_open?
    Next(); // todo обработать результат
 
  }
@@ -264,19 +263,27 @@ bool CGenPassword::Inc(int index){
 void  CGenPasswordFromDict::CalcCountPassword(){
    countPasswords=0;
    string tmp;
+   
+   fr.open( dicPath.c_str());
+   
    while(!fr.eof()){
      std::getline(fr,tmp);
-     countPasswords++;
-   } 
-   fr.seekg(0);
+     if (not tmp.empty()){
+        countPasswords++;
+     }   
+   }  
+   fr.close();   
+   //fr.seekg (0, fr.beg); //
    if (translitType==TYPE_TRANSLIT_BOTH){
       countPasswords*=2;
    }
+   
 }
+
 
 void CGenPasswordFromDict::trInit(){
    for (int i=0 ;i<256;i++ ){
-     tr[i]=i;
+     tr[i]=0;
    }
    tr['z']='я';  tr['Z']='Я';
    tr['x']='ч';  tr['X']='Ч';
@@ -287,7 +294,7 @@ void CGenPasswordFromDict::trInit(){
    tr['m']='ь';  tr['M']='Ь';
    tr[',']='б';  tr['<']='Б';
    tr['.']='ю';  tr['>']='Ю';
-   tr['/']='.';  tr['?']='.';
+   tr['/']='.';  tr['?']=',';
    tr['a']='ф';  tr['A']='Ф';
    tr['s']='ы';  tr['S']='Ы';
    tr['d']='в';  tr['D']='В';
@@ -318,18 +325,34 @@ void CGenPasswordFromDict::trInit(){
                  tr['^']=':';
                  tr['&']='?'; 
                  tr['|']='/'; 
+ 
+   for (int i=0 ;i<256;i++ ){
+     if (tr[i]==0){
+        tr[i]=i;
+        //сами на себя
+     }
+     else { 
+        tr[ tr[i]]=i;
+        //обратная замена
+     }
+     
+   }  
 }
 
 void CGenPasswordFromDict::TranslitPassword(){
    int lenPassword=password.size();
    for(int i=0 ; i<lenPassword; i++){
-      password[i]= tr[password[i]] ; 
+      password[i]= tr[static_cast<unsigned char> (password[i])] ; 
    } 
  }
- 
+//#include <iostream> 
 bool  CGenPasswordFromDict::ReadNextPassword(){
   if (!fr.eof()){
          std::getline(fr,password);
+         //if (fr.tellg()==-1) return false;;
+         if (password.empty()){
+           return ReadNextPassword();
+         }
          numbPassword++;
          return true;
   } 

@@ -83,7 +83,7 @@ private:
   double countPasswords;
   bool queueToTranslit;
   int translitType;
-  char tr[256];
+  unsigned char tr[256];
   void  CalcCountPassword();
   void TranslitPassword();
   bool  ReadNextPassword();
