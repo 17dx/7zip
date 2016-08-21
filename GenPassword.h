@@ -5,9 +5,7 @@
 #include <vector>
 #include <fstream> //istream
 
-const int TYPE_TRANSLIT_NONE=1;
-const int TYPE_TRANSLIT_ONLY=2;
-const int TYPE_TRANSLIT_BOTH=3;
+
 const bool DO_TRANSLIT=true;
 
 using std::string;
@@ -18,7 +16,7 @@ const int  ERROR_RANGE_CHAR_NOT_VALID    = 1;
 const int  ERROR_RANGE_LENGTH_NOT_VALID  = 2;
 const int  ERROR_OPTION_NO_DIGITAL_ARGUMENT= 3;
 const int  ERROR_LITTLE_LENGTH_PASSWORD = 4;
-const int  ERROR_OPTION_NOT_VALID_KEYWORD = 5;
+
 
 class CAbstractGenPassword{
 public:
@@ -76,7 +74,7 @@ protected:
 class CGenPasswordFromDict: public CAbstractGenPassword{
  public:
   string dicPath;
-  CGenPasswordFromDict(string dicPath_,string translitType_);
+  CGenPasswordFromDict(string dicPath_,int translitType_);
   virtual bool Next(); //overload
   virtual double CountPasswords(); //overload
   ~CGenPasswordFromDict();

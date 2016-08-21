@@ -2,6 +2,7 @@
 #include <sstream> // для stringstream
 #include <cmath> // для pow
 #include <cstdlib> //Для atoi
+#include "GetOptions.h"
 
 CAbstractGenPassword::CAbstractGenPassword(){
      codeError=ERROR_NONE;
@@ -244,20 +245,9 @@ bool CGenPassword::Inc(int index){
 //////////////////////наследник класса CAbstractGenPassword //////////////
 //////////////////////////////////////////////////////////////////
  
- CGenPasswordFromDict::CGenPasswordFromDict(string dicPath_,string translitType_){
+ CGenPasswordFromDict::CGenPasswordFromDict(string dicPath_,int translitType_){
    dicPath= dicPath_;
-   if (translitType_== ""){    
-           translitType=TYPE_TRANSLIT_NONE;
-   } else if (translitType_== "both"){ 
-           translitType=TYPE_TRANSLIT_BOTH;
-   } else if (translitType_== "only"){    
-           translitType=TYPE_TRANSLIT_ONLY;
-   }else{
-       msgErr="invalid keyword by option -t";
-       codeError=ERROR_OPTION_NOT_VALID_KEYWORD;
-       return ;
-       //throw THROW_OPTION_NOT_VALID_KEYWORD;
-   }
+   translitType=translitType_;
    
    trInit();
    fr.open( dicPath.c_str());
@@ -347,15 +337,7 @@ bool  CGenPasswordFromDict::ReadNextPassword(){
  }
  
  bool  CGenPasswordFromDict::Next(){
-   if (translitType==TYPE_TRANSLIT_NONE){
-     return ReadNextPassword();
-   }
-   else if (translitType==TYPE_TRANSLIT_ONLY ){
-      bool result = ReadNextPassword();
-      TranslitPassword();          
-      return result;      
-   }
-   else if (translitType==TYPE_TRANSLIT_BOTH ){ 
+   if (translitType==TYPE_TRANSLIT_BOTH ){ 
            bool result =true;   
            if (queueToTranslit==DO_TRANSLIT){                 
                  TranslitPassword();
@@ -367,6 +349,15 @@ bool  CGenPasswordFromDict::ReadNextPassword(){
            queueToTranslit= not queueToTranslit;
            //осуществляем чередование
            return result;
+   }
+   else if (translitType==TYPE_TRANSLIT_ONLY ){
+      bool result = ReadNextPassword();
+      TranslitPassword();          
+      return result;      
+   }
+   
+   else if (translitType==TYPE_TRANSLIT_NONE){
+     return ReadNextPassword();
    }
  
    return false;

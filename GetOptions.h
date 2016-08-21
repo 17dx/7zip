@@ -6,11 +6,15 @@
 
 using std::string;
 
+const int TYPE_TRANSLIT_NONE=1;
+const int TYPE_TRANSLIT_ONLY=2;
+const int TYPE_TRANSLIT_BOTH=3;
 
 class ex_file_not_found : public std::exception{};
 class ex_invalid_arguments : public std::exception{};
 class ex_option_l_with_m: public std::exception{};
 class ex_option_a_with_u: public std::exception{};
+class ex_option_not_valid_keyword: public std::exception{};
 class ex_option_no_digital_argument : public std::exception{};
 class ex_little_option : public std::exception{};
 class ex_skip_argument  : public std::exception{};
@@ -31,7 +35,8 @@ class CGetOptions{
    string path7zip;// без кавычек
    string arhiveName;
    string userName;
-   string translitType;
+   string sTranslitType;
+   int translitType;
 
    bool IsFindOpitonL;
    bool IsFindOpitonM;

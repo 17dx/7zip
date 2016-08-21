@@ -116,7 +116,7 @@ void CGetOptions::registerAllOptions(){
                       &IsFindOpitonU); 
                       
   propOptions.registerOption( "-t",
-                      &translitType,
+                      &sTranslitType,
                       " -t  type   - translit word from dictionary, used with option -d\n"
                       "              available types: both and only\n",
                       &IsFindOpitonT);   
@@ -160,6 +160,23 @@ void CGetOptions::TestResultParse(){
             CheckExistFile(path7zip);
             CheckExistFile(arhiveName);
         }
+        
+        translitType=TYPE_TRANSLIT_NONE;
+        if ( IsFindOpitonT){
+            if (sTranslitType== ""){    
+               translitType=TYPE_TRANSLIT_NONE;
+            } 
+            else if (sTranslitType== "both"){ 
+                translitType=TYPE_TRANSLIT_BOTH;
+            } 
+            else if (sTranslitType== "only"){    
+               translitType=TYPE_TRANSLIT_ONLY;
+            }
+            else{
+               PrintMSG( "invalid keyword by option -t","");
+               throw ex_option_not_valid_keyword();
+            } 
+        }    
 
 }
 
