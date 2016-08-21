@@ -251,7 +251,11 @@ bool CGenPassword::Inc(int index){
    
    trInit();
    CalcCountPassword();  
-   
+   if (countPasswords==0){
+      msgErr="error dictonary empty";
+      codeError=ERROR_DICTONARY_EMPTY;
+      return;
+   }
    numbPassword=0;
    queueToTranslit=not DO_TRANSLIT;
    fr.open( dicPath.c_str());//раньше открывать файл нельзя  
