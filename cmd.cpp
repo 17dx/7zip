@@ -1,4 +1,4 @@
-﻿//g++ PropOption.cpp GenPassword.cpp FindPassword.cpp GetOptions.cpp cmd.cpp -o cmd2
+﻿//g++ ParseRangesInMask.cpp RangeChar.cpp PropOption.cpp GenPassword.cpp FindPassword.cpp GetOptions.cpp cmd.cpp -o cmd2
  //-mric* -uIF -r "a-z" -v
 #include <iostream> //для  cout, cin
 #include <cstdlib> // для exit
@@ -27,7 +27,13 @@ CAbstractGenPassword * GetObjGenPassword(CGetOptions * options){
            genPassword=new CGenPassword(options->sLengthPassword,options->range);
         }
         else if (options->IsFindOpitonM){
-           genPassword=new CGenPasswordOnMask(options->mask,options->range);
+           if (options->IsFindOpitonE){
+              genPassword=new CGenPasswordOnMask(options->mask);
+           }
+           else{    
+              genPassword=new CGenPasswordOnMask(options->mask,options->range);
+           }
+           
         }  
         else {
            genPassword=new CGenPasswordFromDict(options->dicPath,options->translitType);

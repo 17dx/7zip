@@ -124,7 +124,12 @@ void CGetOptions::registerAllOptions(){
    propOptions.registerOption( "-v",
                       NULL,
                       " -v         - verbose\n",
-                      &IsFindOpitonV);   
+                      &IsFindOpitonV);  
+
+   propOptions.registerOption( "-e",
+                      NULL,
+                      " -e         - extend mask\n",
+                      &IsFindOpitonE);                       
                     
 
 }
@@ -186,11 +191,6 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         argCount=argc;
         argv=argv_;
 
-        /*IsFindOpitonL = false;
-        IsFindOpitonM = false;
-        IsFindOpitonV = false;
-        IsFindOpitonA = false;
-        IsFindOpitonU = false;  инициализируются в регистраторе  */    
 
         range="0-9";
         arhiveName="test.zip" ;

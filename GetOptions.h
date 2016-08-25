@@ -40,6 +40,7 @@ class CGetOptions{
 
    bool IsFindOpitonL;
    bool IsFindOpitonM;
+   bool IsFindOpitonE;
    bool IsFindOpitonD;
    bool IsFindOpitonV;
    bool IsFindOpitonA;

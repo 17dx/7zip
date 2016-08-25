@@ -5,18 +5,16 @@
 #include <vector>
 #include <fstream> //istream
 
+#include <cmath> // для pow
+#include <cstdlib> //Для atoi
+
+#include "RangeChar.h"
+#include "noerrors.h"
 
 const bool DO_TRANSLIT=true;
 
 using std::string;
 using std::vector;
-
-const int  ERROR_NONE    = 0;
-const int  ERROR_RANGE_CHAR_NOT_VALID    = 1;
-const int  ERROR_RANGE_LENGTH_NOT_VALID  = 2;
-const int  ERROR_OPTION_NO_DIGITAL_ARGUMENT= 3;
-const int  ERROR_LITTLE_LENGTH_PASSWORD = 4;
-const int  ERROR_DICTONARY_EMPTY = 5;
 
 
 class CAbstractGenPassword{
@@ -43,21 +41,19 @@ public:
   virtual bool Next(); //overload
   virtual double CountPasswords(); //overload
 protected:
-  char minValue;
-  char maxValue;  
-  vector<char> charRange;
+
   int lenPassword;
-  char* arr; //динамический массив из  чисел
+  CRangeChar ** chars;
   bool Inc(int index);
-  void ParseRangeChar(string& range);
-  void AppendRange(char firstChar,char lastChar);
   void ReInit(int len);
   int  StringToInt(string  s);
   void ParseRangeLength(string& range);
-  void Init(int len, string& range);
+  void Init(int len,string& range);//, string& range
+  void Init(int len);//,CRangeChar** ranges, string& range
   virtual void CreatePassword();
 private:
-  int minLen;
+  int startLen;
+  int endLen;
   int maxLen;
   int stepOnLen;  
 };
@@ -65,12 +61,15 @@ private:
 
 class CGenPasswordOnMask:public CGenPassword{
 public:
-  CGenPasswordOnMask(string mask,string& range);
+  CGenPasswordOnMask(string& mask,string& range);
+  CGenPasswordOnMask(string& ext_mask);
   virtual void CreatePassword();
+
 protected:
-  vector<std::string::size_type> posStar;
+  vector<std::string::size_type> posPointInsert;
 
 };
+
 
 class CGenPasswordFromDict: public CAbstractGenPassword{
  public:
@@ -91,8 +90,5 @@ private:
   void trInit();
   
 };
-
-
-
 
 #endif // GENPASSW_H
