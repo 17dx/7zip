@@ -22,28 +22,35 @@ class ex_logical_error_ArhiveNotOpen_in_7zdll : public std::exception{};
 *
 *
 */
+
 const int  SUCCESS_UNZIP=1;
 const int  NOT_SUCCESS_UNZIP=0;
 const int  ERROR_ARHIVE_NOT_OPEN=2; 
 
-typedef int (__stdcall *FUnzip)( const char * );
+typedef int (__stdcall *FUnzip)( const char * , const char *);
 typedef void (__stdcall *FOpenArhive)( const char * );
+
+
 
 class CFindPassword {
 public:  
+  string truePassword; 
   CFindPassword( bool verbose_);
-  virtual bool PasswordIsTrue(string& password)=0;
+  virtual bool PasswordIsTrue(SPasswordInfo& passwordInfo)=0;
   bool DoFind(CAbstractGenPassword& genPassword);
   virtual ~CFindPassword();
+  bool FindOK();
+  
 protected:
   bool verbose;
+  bool findOK;  
 };
 
 class CArhiveConsole7z:public CFindPassword {
 public:
   
   CArhiveConsole7z( string& pArhiveName,string& path7zip_,bool verbose_);
-  virtual bool PasswordIsTrue(string& password);
+  virtual bool PasswordIsTrue(SPasswordInfo& passwordInfo);
 protected:
   string path7zip;
   string arhiveName;
@@ -55,7 +62,7 @@ class CArhiveWith_Dll7z :public CFindPassword{
 public:
   
   CArhiveWith_Dll7z( string& pArhiveName,bool verbose_);
-  bool PasswordIsTrue(string& password);
+  bool PasswordIsTrue(SPasswordInfo& passwordInfo);
   ~CArhiveWith_Dll7z();
 private:
   string arhiveName;  
@@ -66,7 +73,7 @@ private:
 class CUserLogon :public CFindPassword{
 public:  
   CUserLogon( string& pUserName,bool verbose_);
-  bool PasswordIsTrue(string& password);
+  bool PasswordIsTrue(SPasswordInfo& passwordInfo);
 private:
   const char * userName;  
 };

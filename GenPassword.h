@@ -12,25 +12,35 @@
 #include "noerrors.h"
 #include "common.h"
 
+
 const bool DO_TRANSLIT=true;
 
 using std::string;
 using std::vector;
 
+struct SPasswordInfo{
+  const char * password;
+  const char * extraInfo;
+};
 
 class CAbstractGenPassword{
 public:
 //пустой пароль приводит к ошибке в dll
   string password;
+  SPasswordInfo passwordInfo;
 
-
-  double numbPassword;
+  TCount numbPassword;
+  TCount upperBoundaryCountPassword;
+  
+  
   CEventError eventError;
   virtual bool Next()=0;
-  virtual double CountPasswords()=0;   
+  virtual TCount CountPasswords()=0;   
   CAbstractGenPassword();
   virtual ~CAbstractGenPassword(){};
   virtual void SetNewLowerBoundary(string & start)=0;
+  virtual void SetNewLowerBoundary(TCount num_passw)=0;
+  virtual void SetNewUpperBoundaryAsMax(TCount maxCountPassword);
   virtual void ReCreateFirstPassword()=0;
   
 };
@@ -41,13 +51,16 @@ public:
   CGenPassword(string& lenRange, string& range);
   ~CGenPassword();  
   virtual bool Next(); //overload
-  virtual double CountPasswords(); //overload
+  virtual TCount CountPasswords(); //overload
   virtual void SetNewLowerBoundary(string & start);//overload
+  virtual void SetNewLowerBoundary(TCount num_passw);//overload
   virtual void ReCreateFirstPassword();//overload
 protected:
 
   int lenPassword;
   CRangeChar ** chars;
+  
+  
   bool Inc(int index);
   void ReInit(int len);
   
@@ -55,6 +68,7 @@ protected:
   void Init(int len,string& range);//, string& range
   void Init(int len);//,CRangeChar** ranges, string& range
   virtual void CreatePassword();
+  
 private:
   int startLen;
   int endLen;
@@ -80,13 +94,14 @@ class CGenPasswordFromDict: public CAbstractGenPassword{
   string dicPath;
   CGenPasswordFromDict(string dicPath_,int translitType_);
   virtual bool Next(); //overload
-  virtual double CountPasswords(); //overload
+  virtual TCount CountPasswords(); //overload
   ~CGenPasswordFromDict();
   virtual void SetNewLowerBoundary(string & start);
+  virtual void SetNewLowerBoundary(TCount num_passw);
   virtual void ReCreateFirstPassword();
 private:  
   std::ifstream   fr;
-  double countPasswords;
+  TCount countPasswords;
   bool queueToTranslit;
   int translitType;
   unsigned char tr[256];

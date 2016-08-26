@@ -3,13 +3,14 @@
 
 #include "noerrors.h"
 #include <string>
+#include <sstream> //stringstream
 
 #define  EXIT_IF_ERROR() \
   if (eventError.LastError() != ERROR_NONE) return ;
   
 using std::string;
 
-
+typedef  unsigned long long TCount;
 
 class CEventError{
 public:
@@ -20,7 +21,13 @@ public:
 };
 
 int  StringToInt(string  s);
-string to_string(size_t i) ;
-string to_string(char c);
+
+
+template <typename T>
+string to_string(const T v){
+   std::stringstream ss;
+   ss << v ;
+   return ss.str();
+};
  
  #endif // COMMON_H

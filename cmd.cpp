@@ -1,4 +1,4 @@
-﻿//g++ common.cpp ParseRangesInMask.cpp RangeChar.cpp PropOption.cpp GenPassword.cpp FindPassword.cpp GetOptions.cpp cmd.cpp -o cmd2
+﻿//g++ directThread.cpp common.cpp ParseRangesInMask.cpp RangeChar.cpp PropOption.cpp GenPassword.cpp FindPassword.cpp GetOptions.cpp cmd.cpp -o cmd2
  //-mric* -uIF -r "a-z" -v
 #include <iostream> //для  cout, cin
 #include <cstdlib> // для exit
@@ -7,63 +7,22 @@
 #include "GetOptions.h"
 #include "FindPassword.h"
 #include "GenPassword.h"
+#include "directThread.h"
 
 using std::cout;
 using std::endl;
 using std::cin;
 
+
 time_t tStart, tEnd;
-CAbstractGenPassword * genPassword =NULL;
+CDirectThread * directThread=NULL;
 
 void ExitProg(){
   cin.get(); 
   exit(0);
 }
 
-CAbstractGenPassword * GetObjGenPassword(CGetOptions * options){
-    CAbstractGenPassword * genPassword;
-    
-        if (options->IsFindOpitonL){
-           genPassword=new CGenPassword(options->sLengthPassword,options->range);
-        }
-        else if (options->IsFindOpitonM){
-           if (options->IsFindOpitonE){
-              genPassword=new CGenPasswordOnMask(options->mask);
-           }
-           else{    
-              genPassword=new CGenPasswordOnMask(options->mask,options->range);
-           }
-           
-        }  
-        else {
-           genPassword=new CGenPasswordFromDict(options->dicPath,options->translitType);
-        } 
-    if (options->IsFindOpitonS){
-      genPassword->SetNewLowerBoundary(options->startValue);
-      genPassword->ReCreateFirstPassword();
-    }
-    
-    if (genPassword->eventError.LastError() != ERROR_NONE){
-	   ExitProg();
-    }
-    
-    return genPassword;
-}
-
-CFindPassword * GetObjFindPassword(CGetOptions * options){
-    CFindPassword * findPassword;
-
-        if (options->IsFindOpitonU ){
-           findPassword=new CUserLogon(options->userName,options->IsFindOpitonV);
-        }
-        else {
-           findPassword=new CArhiveWith_Dll7z(options->arhiveName,options->IsFindOpitonV);;
-        }
-
-    return findPassword;
-}
-
-void ShowStat(){
+void ShowEndStat(){
         time(&tEnd);  // получаем время конца работы программы
         double seconds = difftime(tEnd, tStart);
         cout<< "elapsed time: ";
@@ -72,8 +31,8 @@ void ShowStat(){
         }
         cout<< (int(seconds) % 60 )<< " sec"<<endl;
         
-        if (genPassword==NULL) return;
-        float speed=genPassword->numbPassword;
+        if (directThread==NULL) return;
+        float speed=directThread->CalcSum();
         if (seconds!=0){
             speed/=seconds ;
         }
@@ -82,7 +41,9 @@ void ShowStat(){
 }
 
 void ShowLastPassword(){
-        cout<<"last password: \"" << genPassword->password<<"\"\n";
+        cout<<"last password: " ;
+        directThread->PrintLastPassword();
+        cout<<endl<<endl;
 }
 
 
@@ -90,12 +51,13 @@ BOOL WINAPI HandlerRoutine (DWORD dwCtrlType){
   if (dwCtrlType==CTRL_C_EVENT){  
      cout<<"interrupted by the user\n";
      ShowLastPassword();
-     ShowStat();     
+     ShowEndStat();     
      exit(0);
      return true;
   } 
   return false;
 }
+
 
 
 int  main(int argc, char* argv[])
@@ -105,14 +67,16 @@ int  main(int argc, char* argv[])
 
     try{
         CGetOptions  options(argc,  argv); 
-        CFindPassword * findPassword = GetObjFindPassword(&options);
-        genPassword = GetObjGenPassword(&options);
-                        
+        directThread = new CDirectThread(&options);
         time(&tStart); // получаем время начала работы программы
-        if (not findPassword->DoFind(*genPassword)){
+        directThread->Run();
+        //CFindPassword * findPassword = GetObjFindPassword(&options);
+        //genPassword = GetObjGenPassword(&options);      
+        //time(&tStart); // получаем время начала работы программы
+        /*if (not findPassword->DoFind(*genPassword)){
            cout<< "password not found                       "<< endl;
-        };
-        ShowStat();
+        };*/
+        ShowEndStat();
     }
     catch(...){
       ExitProg();

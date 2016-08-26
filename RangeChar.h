@@ -6,6 +6,8 @@
 #include "noerrors.h"
 #include "common.h"
 
+typedef  unsigned char TIndexInRange;
+
 using std::string;
 using std::vector;
 
@@ -18,13 +20,14 @@ public:
   void ValueToFloor() ;
   char GetValue() ; 
   void SetValue(char nv) ; 
+  void SetValueAsIndex(TIndexInRange nv);
   size_t GetRangeSize() ;
   CEventError eventError;
   string charRangeAsString;
 protected:
-  unsigned char value;  
-  unsigned char minValue; // todo всегда ноль
-  unsigned char maxValue;  //todo хранить по size charRange 
+  TIndexInRange value;  
+  TIndexInRange minValue; // todo всегда ноль
+  TIndexInRange maxValue;  //todo хранить по size charRange 
   vector<char> * charRange;   
   void ParseRangeChar(string& range);
   void AppendRange(char firstChar,char lastChar);

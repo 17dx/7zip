@@ -8,4 +8,5 @@ const int  ERROR_LITTLE_LENGTH_PASSWORD = 4;
 const int  ERROR_DICTONARY_EMPTY = 5;
 const int  ERROR_EXT_MASK_NOT_VALID    = 6;
 const int  ERROR_SETTING_VALUE   = 7;
+const int  ERROR_LITTLE_COUNT_THREAD = 8;
 #endif // NOERRORS_H

@@ -5,7 +5,12 @@
 #include "GetOptions.h"
 
 CAbstractGenPassword::CAbstractGenPassword(){
-     
+  upperBoundaryCountPassword=-1;    
+}
+
+
+void CAbstractGenPassword::SetNewUpperBoundaryAsMax(TCount maxCountPassword){
+   upperBoundaryCountPassword=maxCountPassword;
 }
 
 //конструктор
@@ -37,11 +42,31 @@ void CGenPassword::ReInit(int len){
 void CGenPassword::SetNewLowerBoundary(string & start){ 
   EXIT_IF_ERROR();
   if (lenPassword!=start.size()){
-     eventError.CreateEventError(" lenPassword!=lenLowerBoundary ",ERROR_SETTING_VALUE);
+     string msg_error= " len_password (";
+     msg_error+=to_string(lenPassword)+") != len_start_password ("+to_string(start.size())+")";
+     eventError.CreateEventError(msg_error,ERROR_SETTING_VALUE);
      return;
   }  
   for(int i=0; i < lenPassword; i++){
     chars[i]->SetValue(start[i]);
+    EXIT_IF_ERROR();
+  }  
+};
+
+void CGenPassword::SetNewLowerBoundary(TCount num_passw){ 
+  EXIT_IF_ERROR();
+  
+  TCount TotalPasswords= CountPasswords();
+  if ( num_passw > TotalPasswords){
+     string msg_error= " start_number_password (";
+     msg_error+=to_string(num_passw)+") > total_count_password ("+to_string(TotalPasswords)+")";
+     eventError.CreateEventError(msg_error,ERROR_SETTING_VALUE);
+     return;
+  }  
+  for(int i=lenPassword; i != 0; i--){
+    TIndexInRange value = num_passw % chars[i-1]->GetRangeSize();
+    chars[i-1]->SetValueAsIndex(value);
+    num_passw/= chars[i-1]->GetRangeSize();
     EXIT_IF_ERROR();
   }  
 };
@@ -137,6 +162,9 @@ CGenPassword::~CGenPassword(){
 
 //создать следующий пароль
 bool CGenPassword::Next(){
+  if (upperBoundaryCountPassword<numbPassword){
+     return false;
+  }
   if ( not Inc(lenPassword-1) ){
     if (endLen !=0 && lenPassword != endLen){   
      // endLen !=0 на случай инициализации не через опцию -l    
@@ -159,15 +187,16 @@ bool CGenPassword::Next(){
    for(int i = 0; i < lenPassword; i++){
      password+=chars[i]->GetValue();
    }
+   passwordInfo.password=password.c_str();
  }
  
- double CGenPassword::CountPasswords(){
+ TCount CGenPassword::CountPasswords(){
    //if (endLen !=0){
-       double count=0;
+       TCount count=0;
        int i = startLen-stepOnLen;
        do{
            i+=stepOnLen;
-           double combination_count=1;
+           TCount combination_count=1;
            for(int j=0;j<i;j++){
               combination_count*=chars[j]->GetRangeSize();
            }
@@ -257,6 +286,7 @@ bool CGenPassword::Inc(int index){
    for(int i = 0; i < lenPassword; i++){
      password[posPointInsert[i]]=chars[i]->GetValue();//charRange[arr[i]];
    }
+   passwordInfo.password=password.c_str();
  }
  
 
@@ -439,7 +469,7 @@ bool  CGenPasswordFromDict::ReadNextPassword(){
    return false;
  }
 
- double CGenPasswordFromDict::CountPasswords(){
+ TCount CGenPasswordFromDict::CountPasswords(){
 
    return countPasswords;
 
@@ -452,6 +482,11 @@ bool  CGenPasswordFromDict::ReadNextPassword(){
   void  CGenPasswordFromDict::SetNewLowerBoundary(string & start){
     //todo доделать
   };
+  
+  void CGenPasswordFromDict::SetNewLowerBoundary(TCount num_passw){ 
+     //todo доделать
+  }; 
+  
   void  CGenPasswordFromDict::ReCreateFirstPassword(){
     //todo доделать
   };  

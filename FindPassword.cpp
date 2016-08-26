@@ -14,32 +14,39 @@ using std::setfill;
 
 CFindPassword::CFindPassword(bool verbose_){
     verbose = verbose_;
+    findOK=false;
 }
 
  CFindPassword::~CFindPassword(){
 }
 
+bool CFindPassword::FindOK(){
+    return findOK;
+}
 
 bool CFindPassword::DoFind(CAbstractGenPassword& genPassword){
-  double countPasswords= genPassword.CountPasswords();
+  /*TCount countPasswords= genPassword.CountPasswords();
   cout<<"count passwords:" << std::fixed<<std::setprecision(0)<< countPasswords<< endl; 
   int lastPercent =0;
-  int percent=0;
+  int percent=0;*/
   do{
      
      if (verbose){
-         cout<< genPassword.password<< endl; 
+         cout<< genPassword.password<< endl; //todo
      }
-     else{
-        percent = (genPassword.numbPassword/countPasswords*100);
+     /*else{
+        percent = (static_cast<double> (genPassword.numbPassword)/countPasswords*100);
         if (percent>lastPercent){
            lastPercent=percent;
            cout << setfill(' ') << setw(3)<< percent;
            cout << "% :: " << genPassword.password << "\r";
         }
-     }
-     if ( PasswordIsTrue(genPassword.password) ){        
-        cout<< "\npassword found: \""<< genPassword.password <<"\"                  "<< endl;
+     }*/
+     
+     if ( PasswordIsTrue(genPassword.passwordInfo) ){  
+        truePassword= genPassword.password  ;
+        findOK=true;        
+        //cout<< "\npassword found: \""<< genPassword.password <<"\"                  "<< endl;
         return true; 
      };
   } 
@@ -60,10 +67,10 @@ CArhiveConsole7z::CArhiveConsole7z( string& pArhiveName,string& path7zip_,bool v
 }
 
 // функция запуска 7zip и проверки правильности пароля
-bool CArhiveConsole7z::PasswordIsTrue(string& password){
+bool CArhiveConsole7z::PasswordIsTrue(SPasswordInfo& passwordInfo){
     bool result = true; 
     string cmdLine = "\"" + path7zip + "\""  + " e " + arhiveName + 
-                     " -p" + password + " -y >" +textout  + " 2>&1";;
+                     " -p" + passwordInfo.password + " -y >" +textout  + " 2>&1";;
     //cout<<cmdLine<< endl;
     
     system( cmdLine.c_str());
@@ -112,8 +119,8 @@ CArhiveWith_Dll7z::CArhiveWith_Dll7z( string& pArhiveName, bool verbose_):
 
 }
 
-bool CArhiveWith_Dll7z::PasswordIsTrue(string& password){
-   int result = fUnzip(password.c_str()); 
+bool CArhiveWith_Dll7z::PasswordIsTrue(SPasswordInfo& passwordInfo){
+   int result = fUnzip(passwordInfo.password, passwordInfo.extraInfo); 
    if (result==ERROR_ARHIVE_NOT_OPEN){
       cout << "logical error in wrapper7z.dll: Arhive not open" << endl;
       throw ex_logical_error_ArhiveNotOpen_in_7zdll();
@@ -130,11 +137,11 @@ CUserLogon::CUserLogon(string& pUserName,bool verbose_):CFindPassword( verbose_)
     userName=pUserName.c_str();
 }
 
-bool CUserLogon::PasswordIsTrue(string& password){
+bool CUserLogon::PasswordIsTrue(SPasswordInfo& passwordInfo){
   //PHANDLE phToken;
   HANDLE  hToken;
   
-  bool result=(LogonUser((LPSTR)userName,NULL,(LPSTR)password.c_str(),
+  bool result=(LogonUser((LPSTR)userName,NULL,(LPSTR)passwordInfo.password,
                LOGON32_LOGON_SERVICE,
                LOGON32_PROVIDER_DEFAULT,
                &hToken) !=0);

@@ -84,9 +84,22 @@ void CRangeChar::ValueToFloor() {
      msg_error+=to_string(nv )+" ) out of range ("+charRangeAsString+")";
      eventError.CreateEventError(msg_error,ERROR_SETTING_VALUE) ;
      return ;
-    }
-    
+    }    
  }
+ 
+ void CRangeChar::SetValueAsIndex(TIndexInRange nv){
+   if (nv>=minValue && nv<=maxValue){
+       value=nv;
+   }
+   else{      
+     string msg_error= "index value for setting( ";
+     msg_error+=to_string(static_cast<size_t> (nv) )+" ) out of  index range ("+
+                to_string(static_cast<size_t> (minValue) )+"-"+
+                to_string(static_cast<size_t> (maxValue) )+")";
+     eventError.CreateEventError(msg_error,ERROR_SETTING_VALUE) ;
+     return ;
+    }
+ };
  
 size_t CRangeChar::GetRangeSize(){
    return charRange->size();

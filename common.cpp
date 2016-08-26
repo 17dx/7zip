@@ -1,7 +1,7 @@
 #include "common.h"
 #include <cstdlib> // для exit
 #include <iostream> //для  cout, cin
-#include <sstream> //stringstream
+
 
 int CEventError::codeError;
 
@@ -36,15 +36,5 @@ int StringToInt(string  s){
   return atoi(s.c_str());
 }
 
-string to_string(size_t i){
-   std::stringstream ss;
-   ss << i ;
-   return ss.str();
-} 
 
-string to_string(char c){
-   std::stringstream ss;
-   ss << c ;
-   return ss.str();
-} 
 

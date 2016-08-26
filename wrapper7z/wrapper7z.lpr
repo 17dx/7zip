@@ -11,7 +11,7 @@ const SUCCESS_UNZIP=1;
 var Archivery:I7zInArchive ;
     lastArhiveName:string;
     ArhiveNameIsOpen:boolean=false;
-function Unzip( pPassword: PChar):integer; stdcall;
+function Unzip( pPassword: PChar; pathTo: PChar):integer; stdcall;
 begin
   if not ArhiveNameIsOpen then begin
       result:=ERROR_ARHIVE_NOT_OPEN;
@@ -21,7 +21,7 @@ begin
   begin
     (Archivery as IResultStatus).ClearStatusResult(); //сброс состояния ошибки
     SetPassword((pPassword));
-    ExtractTo('test');
+    ExtractTo(pathTo);
     if ((Archivery as IResultStatus).OperationIsSuccess()) then
      result:= SUCCESS_UNZIP
     else result:= NOT_SUCCESS_UNZIP ;

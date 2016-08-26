@@ -14,6 +14,7 @@ class ex_file_not_found : public std::exception{};
 class ex_invalid_arguments : public std::exception{};
 class ex_option_l_with_m: public std::exception{};
 class ex_option_a_with_u: public std::exception{};
+class ex_option_n_with_d: public std::exception{};
 class ex_option_not_valid_keyword: public std::exception{};
 class ex_option_no_digital_argument : public std::exception{};
 class ex_little_option : public std::exception{};
@@ -37,6 +38,7 @@ class CGetOptions{
    string userName;
    string sTranslitType;
    string startValue;
+   string countThread;
    int translitType;
 
    bool IsFindOpitonL;
@@ -48,6 +50,7 @@ class CGetOptions{
    bool IsFindOpitonU;
    bool IsFindOpitonT;
    bool IsFindOpitonS;
+   bool IsFindOpitonN;
 
  private:
    int argCount;

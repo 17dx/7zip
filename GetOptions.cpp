@@ -76,7 +76,7 @@ void CGetOptions::registerAllOptions(){
                       
   propOptions.registerOption( "-d",
                       &dicPath,
-                      " -d path    - path to dictionary, not compatible with -l and -m, \n"
+                      " -d path    - path to dictionary, not compatible with -l and -m end -n, \n"
                       "              for example: \"dic.txt\"\n"
                       "              behavior modification using option -t \n",
                       &IsFindOpitonD);                       
@@ -110,7 +110,13 @@ void CGetOptions::registerAllOptions(){
                       &sTranslitType,
                       " -t  type   - translit word from dictionary, used with option -d\n"
                       "              available types: both and only\n",
-                      &IsFindOpitonT);   
+                      &IsFindOpitonT);  
+
+  propOptions.registerOption( "-n",
+                      &countThread,
+                      " -n  count  - count thread, not compatible with option -d\n"
+                      "              default count = 1\n",
+                      &IsFindOpitonN);                       
                       
    propOptions.registerOption( "-v",
                       NULL,
@@ -152,6 +158,13 @@ void CGetOptions::TestResultParse(){
 
         }
         
+        if (IsFindOpitonN && IsFindOpitonD ) {
+              PrintMSG( "error option -n not compatible with  option -d","");
+              throw ex_option_n_with_d();
+
+        }
+        
+        
         if (not IsFindOpitonU){
             CheckExistFile(path7zip);
             CheckExistFile(arhiveName);
@@ -186,6 +199,8 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
         range="0-9";
         arhiveName="test.zip" ;
         path7zip="C:\\Program Files\\7-Zip\\7z.exe"; 
+        
+        countThread="1";
         //lengthPassword=0;
         
         if (argCount < 2){
