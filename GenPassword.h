@@ -20,7 +20,8 @@ using std::vector;
 
 struct SPasswordInfo{
   const char * password;
-  const char * extraInfo;
+  const char * extraInfo ;
+  string sExtraInfo;
 };
 
 class CAbstractGenPassword{
@@ -42,6 +43,7 @@ public:
   virtual void SetNewLowerBoundary(TCount num_passw)=0;
   virtual void SetNewUpperBoundaryAsMax(TCount maxCountPassword);
   virtual void ReCreateFirstPassword()=0;
+  void InitExtraInfo(string & extraInfo);
   
 };
 

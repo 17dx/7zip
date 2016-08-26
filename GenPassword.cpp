@@ -5,7 +5,8 @@
 #include "GetOptions.h"
 
 CAbstractGenPassword::CAbstractGenPassword(){
-  upperBoundaryCountPassword=-1;    
+  upperBoundaryCountPassword=-1;  
+  passwordInfo.extraInfo="." ; 
 }
 
 
@@ -13,6 +14,10 @@ void CAbstractGenPassword::SetNewUpperBoundaryAsMax(TCount maxCountPassword){
    upperBoundaryCountPassword=maxCountPassword;
 }
 
+void CAbstractGenPassword::InitExtraInfo(string & extraInfo){
+  passwordInfo.sExtraInfo=extraInfo ;
+  passwordInfo.extraInfo=passwordInfo.sExtraInfo.c_str() ;    
+}
 //конструктор
 CGenPassword::CGenPassword(){
   startLen=0;

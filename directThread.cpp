@@ -94,7 +94,7 @@ void CDirectThread::SplitTaskOnThread(){
        genPasswordArr[i]=GetObjGenPassword();
        genPasswordArr[i]->SetNewLowerBoundary(count_for_each*i);
        genPasswordArr[i]->SetNewUpperBoundaryAsMax(count_for_each);
-       genPasswordArr[i]->passwordInfo.extraInfo=extraInfo.c_str();
+       genPasswordArr[i]->InitExtraInfo(extraInfo);
        genPasswordArr[i]->ReCreateFirstPassword();
     } 
     //добавляем остатки к последнему
