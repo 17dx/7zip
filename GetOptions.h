@@ -36,6 +36,7 @@ class CGetOptions{
    string arhiveName;
    string userName;
    string sTranslitType;
+   string startValue;
    int translitType;
 
    bool IsFindOpitonL;
@@ -46,6 +47,7 @@ class CGetOptions{
    bool IsFindOpitonA;
    bool IsFindOpitonU;
    bool IsFindOpitonT;
+   bool IsFindOpitonS;
 
  private:
    int argCount;

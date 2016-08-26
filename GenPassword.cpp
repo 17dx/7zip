@@ -1,6 +1,6 @@
 #include "GenPassword.h"
 #include "ParseRangesInMask.h"
-
+#include <algorithm> // дл€ find
 
 #include "GetOptions.h"
 
@@ -33,13 +33,35 @@ CGenPassword::CGenPassword(string& lenRange, string& range){
 
 void CGenPassword::ReInit(int len){ 
   lenPassword=len;  
-  //delete[] arr ;
-  //arr = new char [lenPassword]; //выдел€ем пам€ть под массив
   for(int i=0; i < lenPassword; i++){
-    //arr[i]=minValue;
     chars[i]->ValueToFloor();
   }  
 };
+
+void CGenPassword::SetNewLowerBoundary(string & start){ 
+  if (LastError() != ERROR_NONE){ return ;}
+  if (lenPassword!=start.size()){
+     msgErr= " lenPassword!=lenLowerBoundary ";
+     codeError=ERROR_SETTING_VALUE;
+     return;
+  }  
+  for(int i=0; i < lenPassword; i++){
+    chars[i]->SetValue(start[i]);
+    
+    if (chars[i]->LastError() != ERROR_NONE) { 
+       msgErr=chars[i]->msgErr ;
+       codeError=chars[i]->LastError();
+       return ;
+    }
+  }  
+};
+
+void CGenPassword::ReCreateFirstPassword(){
+  numbPassword=0;
+  CreatePassword(); 
+}
+
+//upper
 
 //проинициализировать переменные
 // ::эта функци€ пригодитс€ наследникам
@@ -57,7 +79,6 @@ void CGenPassword::Init(int len,string& range){
      return ;
   }
   for(int i=1; i < maxLen; i++){
-     //chars[i] = new CRangeChar(chars[0]->GetPCharRange()) ;
      chars[i] = new CRangeChar(*chars[0]) ;
   } 
   Init(len);//startLen!! почему было ,chars
@@ -225,6 +246,40 @@ bool CGenPassword::Inc(int index){
    password=mask; 
    numbPassword=0;
    CreatePassword();   
+ }
+ 
+ void CGenPasswordOnMask::SetNewLowerBoundary(string & start){
+      if (LastError() != ERROR_NONE){ return ;}
+      size_t len= password.size();
+      if (len != start.size()){
+         msgErr= " len password != len start password";
+         codeError=ERROR_SETTING_VALUE;
+         return;
+      }  
+      size_t j=0;
+      for(size_t i=0 ; i < len; i++){
+            vector<std::string::size_type>::iterator it=std::find(
+                               posPointInsert.begin(), 
+                               posPointInsert.end(), 
+                               i);
+            if (it != posPointInsert.end())  { 
+              chars[j]->SetValue(start[i]); 
+                         
+              if (chars[j]->LastError() != ERROR_NONE) { 
+                 msgErr=chars[j]->msgErr ;
+                 codeError=chars[j]->LastError();
+                 return ;
+              }
+              j++;
+            }    
+            else{           
+               if (password[i]!=start[i]) { 
+                 msgErr="error set start value for password" ;
+                 codeError=ERROR_SETTING_VALUE;
+                 return ;
+              }
+            }        
+       } 
  }
  
  void CGenPasswordOnMask::CreatePassword(){
@@ -430,3 +485,10 @@ bool  CGenPasswordFromDict::ReadNextPassword(){
   CGenPasswordFromDict::~CGenPasswordFromDict(){
     fr.close(); 
   }
+  
+  void  CGenPasswordFromDict::SetNewLowerBoundary(string & start){
+    //todo доделать
+  };
+  void  CGenPasswordFromDict::ReCreateFirstPassword(){
+    //todo доделать
+  };  

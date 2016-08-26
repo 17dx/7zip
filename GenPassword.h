@@ -29,6 +29,8 @@ public:
   int LastError();
   CAbstractGenPassword();
   virtual ~CAbstractGenPassword(){};
+  virtual void SetNewLowerBoundary(string & start)=0;
+  virtual void ReCreateFirstPassword()=0;
 protected:  
     int codeError;
 };
@@ -40,6 +42,8 @@ public:
   ~CGenPassword();  
   virtual bool Next(); //overload
   virtual double CountPasswords(); //overload
+  virtual void SetNewLowerBoundary(string & start);//overload
+  virtual void ReCreateFirstPassword();//overload
 protected:
 
   int lenPassword;
@@ -64,7 +68,7 @@ public:
   CGenPasswordOnMask(string& mask,string& range);
   CGenPasswordOnMask(string& ext_mask);
   virtual void CreatePassword();
-
+  virtual void SetNewLowerBoundary(string & start);//overload
 protected:
   vector<std::string::size_type> posPointInsert;
 
@@ -78,6 +82,8 @@ class CGenPasswordFromDict: public CAbstractGenPassword{
   virtual bool Next(); //overload
   virtual double CountPasswords(); //overload
   ~CGenPasswordFromDict();
+  virtual void SetNewLowerBoundary(string & start);
+  virtual void ReCreateFirstPassword();
 private:  
   std::ifstream   fr;
   double countPasswords;

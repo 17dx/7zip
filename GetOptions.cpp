@@ -95,6 +95,11 @@ void CGetOptions::registerAllOptions(){
                       "              behavior modification using option -t \n",
                       &IsFindOpitonD);                       
                       
+  propOptions.registerOption( "-s",
+                      &startValue,
+                      " -s value   - start value for password",
+                      &IsFindOpitonS); 
+                      
    propOptions.registerOption( "-z",
                       &path7zip,
                       " -z path    - 7 zip program path, default: \n"

@@ -19,6 +19,7 @@ public:
   bool Inc() ;
   void ValueToFloor() ;
   char GetValue() ; 
+  void SetValue(char nv) ; 
   size_t GetRangeSize() ;
   int LastError();  
   //vector<char> * GetPCharRange();

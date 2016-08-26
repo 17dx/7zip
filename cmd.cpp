@@ -38,10 +38,16 @@ CAbstractGenPassword * GetObjGenPassword(CGetOptions * options){
         else {
            genPassword=new CGenPasswordFromDict(options->dicPath,options->translitType);
         } 
+    if (options->IsFindOpitonS){
+      genPassword->SetNewLowerBoundary(options->startValue);
+      genPassword->ReCreateFirstPassword();
+    }
+    
     if (genPassword->LastError() != ERROR_NONE){
        cout<< genPassword->msgErr<<  endl;
 	   ExitProg();
     }
+    
     return genPassword;
 }
 

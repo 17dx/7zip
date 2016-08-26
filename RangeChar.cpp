@@ -1,5 +1,6 @@
 #include "RangeChar.h"
 #include <sstream> // для stringstream
+#include <algorithm> // для find
 
 
 /*CRangeChar::CRangeChar() {
@@ -83,6 +84,19 @@ void CRangeChar::ValueToFloor() {
    return  charRange->at(value);
  
  };
+ 
+ void CRangeChar::SetValue(char nv){
+    vector<char>::iterator it=std::find(charRange->begin(), charRange->end(), nv);
+    if (it != charRange->end())  { 
+       value=it-charRange->begin();
+    }
+    else{
+     msgErr= "value for setting out of range";
+     codeError=ERROR_SETTING_VALUE;
+     return ;
+    }
+    
+ }
  
 size_t CRangeChar::GetRangeSize(){
    return charRange->size();
