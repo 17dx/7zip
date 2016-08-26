@@ -4,31 +4,28 @@
 #include <string>
 #include <vector>
 #include "noerrors.h"
+#include "common.h"
 
 using std::string;
 using std::vector;
 
 class CRangeChar{
 public:
-  string msgErr;
-  
-  //CRangeChar() ; 
-   //CRangeChar(vector<char> * charRange_) ; 
-   CRangeChar(const CRangeChar & obj);
-   CRangeChar(string charRange_) ; 
+
+  CRangeChar(const CRangeChar & obj);
+  CRangeChar(string charRange_) ; 
   bool Inc() ;
   void ValueToFloor() ;
   char GetValue() ; 
   void SetValue(char nv) ; 
   size_t GetRangeSize() ;
-  int LastError();  
-  //vector<char> * GetPCharRange();
+  CEventError eventError;
+  string charRangeAsString;
 protected:
   unsigned char value;  
   unsigned char minValue; // todo всегда ноль
   unsigned char maxValue;  //todo хранить по size charRange 
-  vector<char> * charRange; 
-  int codeError;
+  vector<char> * charRange;   
   void ParseRangeChar(string& range);
   void AppendRange(char firstChar,char lastChar);
   

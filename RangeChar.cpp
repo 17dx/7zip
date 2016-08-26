@@ -3,27 +3,18 @@
 #include <algorithm> // для find
 
 
-/*CRangeChar::CRangeChar() {
-  charRange=NULL;
-  codeError=ERROR_NONE;
-}; */
-
  CRangeChar::CRangeChar(const CRangeChar & obj) {
-  codeError=ERROR_NONE;
   charRange=obj.charRange;
   minValue=obj.minValue; 
   maxValue=obj.maxValue;
+  charRangeAsString=obj.charRangeAsString;
   value=minValue;  
 }; 
 
  CRangeChar::CRangeChar(string charRange_) {
-    codeError=ERROR_NONE;
+    charRangeAsString=charRange_;
     ParseRangeChar(charRange_);
 }; 
-
-int CRangeChar::LastError(){
-  return codeError;
-};
 
 
 void CRangeChar::AppendRange(char firstChar,char lastChar){  
@@ -56,10 +47,8 @@ void CRangeChar::ParseRangeChar(string& range){
   }
   
   if (charRange->size()==0){
-     msgErr= "range char not valid";
-     codeError=ERROR_RANGE_CHAR_NOT_VALID;
+     eventError.CreateEventError("range char not valid",ERROR_RANGE_CHAR_NOT_VALID);
      return ;
-     //throw THROW_RANGE_CHAR_NOT_VALID;
   }
   else{
     minValue=0;
@@ -90,9 +79,10 @@ void CRangeChar::ValueToFloor() {
     if (it != charRange->end())  { 
        value=it-charRange->begin();
     }
-    else{
-     msgErr= "value for setting out of range";
-     codeError=ERROR_SETTING_VALUE;
+    else{      
+     string msg_error= "value for setting( ";
+     msg_error+=to_string(nv )+" ) out of range ("+charRangeAsString+")";
+     eventError.CreateEventError(msg_error,ERROR_SETTING_VALUE) ;
      return ;
     }
     

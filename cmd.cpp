@@ -1,4 +1,4 @@
-﻿//g++ ParseRangesInMask.cpp RangeChar.cpp PropOption.cpp GenPassword.cpp FindPassword.cpp GetOptions.cpp cmd.cpp -o cmd2
+﻿//g++ common.cpp ParseRangesInMask.cpp RangeChar.cpp PropOption.cpp GenPassword.cpp FindPassword.cpp GetOptions.cpp cmd.cpp -o cmd2
  //-mric* -uIF -r "a-z" -v
 #include <iostream> //для  cout, cin
 #include <cstdlib> // для exit
@@ -43,8 +43,7 @@ CAbstractGenPassword * GetObjGenPassword(CGetOptions * options){
       genPassword->ReCreateFirstPassword();
     }
     
-    if (genPassword->LastError() != ERROR_NONE){
-       cout<< genPassword->msgErr<<  endl;
+    if (genPassword->eventError.LastError() != ERROR_NONE){
 	   ExitProg();
     }
     

@@ -5,12 +5,8 @@
 #include "GetOptions.h"
 
 CAbstractGenPassword::CAbstractGenPassword(){
-     codeError=ERROR_NONE;
+     
 }
-
-int CAbstractGenPassword::LastError(){
-  return codeError;
-};
 
 //конструктор
 CGenPassword::CGenPassword(){
@@ -22,7 +18,7 @@ CGenPassword::CGenPassword(){
 
 CGenPassword::CGenPassword(string& lenRange, string& range){
   ParseRangeLength (lenRange);
-  if (LastError()!=ERROR_NONE){ return; }
+  EXIT_IF_ERROR();
   //ошибок небыло значит endLen>0
   Init(startLen,range);
    
@@ -39,20 +35,14 @@ void CGenPassword::ReInit(int len){
 };
 
 void CGenPassword::SetNewLowerBoundary(string & start){ 
-  if (LastError() != ERROR_NONE){ return ;}
+  EXIT_IF_ERROR();
   if (lenPassword!=start.size()){
-     msgErr= " lenPassword!=lenLowerBoundary ";
-     codeError=ERROR_SETTING_VALUE;
+     eventError.CreateEventError(" lenPassword!=lenLowerBoundary ",ERROR_SETTING_VALUE);
      return;
   }  
   for(int i=0; i < lenPassword; i++){
     chars[i]->SetValue(start[i]);
-    
-    if (chars[i]->LastError() != ERROR_NONE) { 
-       msgErr=chars[i]->msgErr ;
-       codeError=chars[i]->LastError();
-       return ;
-    }
+    EXIT_IF_ERROR();
   }  
 };
 
@@ -73,11 +63,8 @@ void CGenPassword::Init(int len,string& range){
   } //не надежно???
   chars=new CRangeChar* [maxLen] ; // todo запомнить что я его создал а не пришел с наружи
   chars[0]=new CRangeChar(range); 
-  if (chars[0]->LastError() != ERROR_NONE) { 
-     msgErr=chars[0]->msgErr ;
-     codeError=chars[0]->LastError();
-     return ;
-  }
+  EXIT_IF_ERROR();
+
   for(int i=1; i < maxLen; i++){
      chars[i] = new CRangeChar(*chars[0]) ;
   } 
@@ -93,10 +80,9 @@ void CGenPassword::Init(int len){ //,CRangeChar** ranges//, string& range
        endLen=len;
   } //не надежно???
   if (len==0) {
-       msgErr="little length password";
-       codeError=ERROR_LITTLE_LENGTH_PASSWORD;
+       eventError.CreateEventError("little length password",ERROR_LITTLE_LENGTH_PASSWORD) ;
        return ;
-       //throw THROW_LITTLE_LENGTH_PASSWORD;
+
   }
 
   for(int i=0; i < lenPassword; i++){
@@ -104,22 +90,6 @@ void CGenPassword::Init(int len){ //,CRangeChar** ranges//, string& range
   }  
 };
     
-
-
-
-int CGenPassword::StringToInt(string  s){
-  int length=s.length();
-
-  for (int i=0; i<length; i++){
-    if (not isdigit(s[i]))
-    {
-       msgErr="no digital value";
-       codeError=ERROR_OPTION_NO_DIGITAL_ARGUMENT;
-       return 0;
-    }
-  }
-  return atoi(s.c_str());
-}
 
 void CGenPassword::ParseRangeLength(string& range){
   startLen=0;
@@ -129,29 +99,29 @@ void CGenPassword::ParseRangeLength(string& range){
   std::size_t pos= range.find("-"); 
   if (pos == string::npos ){
     startLen= StringToInt(range);
-    if(LastError() != ERROR_NONE) return;
+    EXIT_IF_ERROR();
     endLen= startLen;
   }
   else{
     if (pos == range.size()){
-       msgErr="no correct value range length password";
-       codeError=ERROR_RANGE_LENGTH_NOT_VALID;
+       eventError.CreateEventError("no correct value range length password",
+                                    ERROR_RANGE_LENGTH_NOT_VALID);
        return ;
     }
     else{
         startLen= StringToInt(range.substr(0,pos));
-        if(LastError() != ERROR_NONE) return;
+        EXIT_IF_ERROR();
         
         endLen= StringToInt(range.substr(pos+1));
-        if(LastError() != ERROR_NONE) return;
+        EXIT_IF_ERROR();
         
         stepOnLen=(endLen-startLen > 0 ) ? 1: -1;        
     }     
   }  
   
   if (( startLen==0) || ( endLen==0)) {
-       msgErr="little length password";
-       codeError=ERROR_LITTLE_LENGTH_PASSWORD;
+       eventError.CreateEventError("little length password",
+                                   ERROR_LITTLE_LENGTH_PASSWORD);
        return ;
   }
   maxLen=(startLen>endLen)? startLen:endLen;
@@ -249,11 +219,14 @@ bool CGenPassword::Inc(int index){
  }
  
  void CGenPasswordOnMask::SetNewLowerBoundary(string & start){
-      if (LastError() != ERROR_NONE){ return ;}
+      EXIT_IF_ERROR();
       size_t len= password.size();
       if (len != start.size()){
-         msgErr= " len password != len start password";
-         codeError=ERROR_SETTING_VALUE;
+         string msg_error= " len_password (";
+         msg_error+=to_string(len)+") != len_start_password ("+to_string(start.size())+")";
+         
+         eventError.CreateEventError( msg_error,
+                                    ERROR_SETTING_VALUE);
          return;
       }  
       size_t j=0;
@@ -264,18 +237,15 @@ bool CGenPassword::Inc(int index){
                                i);
             if (it != posPointInsert.end())  { 
               chars[j]->SetValue(start[i]); 
-                         
-              if (chars[j]->LastError() != ERROR_NONE) { 
-                 msgErr=chars[j]->msgErr ;
-                 codeError=chars[j]->LastError();
-                 return ;
-              }
+              EXIT_IF_ERROR();           
               j++;
             }    
             else{           
                if (password[i]!=start[i]) { 
-                 msgErr="error set start value for password" ;
-                 codeError=ERROR_SETTING_VALUE;
+                 string msg_error= "error set start value for password (";
+                 msg_error+=to_string(password[i])+" != "+to_string( start[i] )+" )";
+                 eventError.CreateEventError( msg_error ,
+                                   ERROR_SETTING_VALUE);
                  return ;
               }
             }        
@@ -297,15 +267,12 @@ CGenPasswordOnMask::CGenPasswordOnMask(string& ext_mask){
    vector <string> ranges;
    CParseRangesInMask rangesInMask=CParseRangesInMask(ext_mask,&ranges, &posPointInsert);
    rangesInMask.Parse();
-   if (rangesInMask.LastError()!=ERROR_NONE){
-     codeError=rangesInMask.LastError();
-     msgErr =rangesInMask.msgErr;    
-     return ;
-   }
+   EXIT_IF_ERROR();
+
    password=rangesInMask.newMask;
    if (password.empty()){
-     msgErr="little length password, extended mask not valid";
-     codeError=ERROR_EXT_MASK_NOT_VALID;
+     eventError.CreateEventError( "little length password, extended mask not valid",
+                                   ERROR_EXT_MASK_NOT_VALID);
      return ;
      
    }
@@ -313,11 +280,7 @@ CGenPasswordOnMask::CGenPasswordOnMask(string& ext_mask){
    chars=new CRangeChar* [countPointInsert] ; // todo запомнить что я его создал а не пришел с наружи
    for(int i=0; i < countPointInsert; i++){
      chars[i] = new CRangeChar(ranges[i]) ;
-     if (chars[i]->LastError() != ERROR_NONE) { 
-         msgErr=chars[i]->msgErr ;
-         codeError=chars[i]->LastError();
-         return ;
-      }
+     EXIT_IF_ERROR();
    } 
    Init(countPointInsert);
    numbPassword=0;
@@ -338,8 +301,8 @@ CGenPasswordOnMask::CGenPasswordOnMask(string& ext_mask){
    trInit();
    CalcCountPassword();  
    if (countPasswords==0){
-      msgErr="error dictonary empty";
-      codeError=ERROR_DICTONARY_EMPTY;
+      eventError.CreateEventError(  "error dictonary empty",
+                                   ERROR_DICTONARY_EMPTY);
       return;
    }
    numbPassword=0;

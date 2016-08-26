@@ -22,20 +22,6 @@ void CGetOptions::printHelp()
 	//exit(0);
 }
 
-/*int CGetOptions::StringToInt(string & s,const char * option){
-  int length=s.length();
-
-  for (int i=0; i<length; i++){
-    if (not isdigit(s[i]))
-    {
-        PrintMSG("no digital value by ",option);
-        throw ex_option_no_digital_argument() ;
-        //exit(0);
-    }
-  }
-  return atoi(s.c_str());
-}*/
-
 
 string CGetOptions::getNextArgAsString(int numArg){
    string result;
@@ -226,9 +212,6 @@ CGetOptions::CGetOptions(int argc, char* argv_[])
               }
         }
         
-        /*if (IsFindOpitonL){
-           lengthPassword=StringToInt(sLengthPassword, "length password");
-        }*/
 
         TestResultParse();
 

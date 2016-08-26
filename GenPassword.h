@@ -10,6 +10,7 @@
 
 #include "RangeChar.h"
 #include "noerrors.h"
+#include "common.h"
 
 const bool DO_TRANSLIT=true;
 
@@ -21,18 +22,17 @@ class CAbstractGenPassword{
 public:
 //пустой пароль приводит к ошибке в dll
   string password;
-  string msgErr;
+
 
   double numbPassword;
+  CEventError eventError;
   virtual bool Next()=0;
-  virtual double CountPasswords()=0; 
-  int LastError();
+  virtual double CountPasswords()=0;   
   CAbstractGenPassword();
   virtual ~CAbstractGenPassword(){};
   virtual void SetNewLowerBoundary(string & start)=0;
   virtual void ReCreateFirstPassword()=0;
-protected:  
-    int codeError;
+  
 };
 
 class CGenPassword:public CAbstractGenPassword{
@@ -50,7 +50,7 @@ protected:
   CRangeChar ** chars;
   bool Inc(int index);
   void ReInit(int len);
-  int  StringToInt(string  s);
+  
   void ParseRangeLength(string& range);
   void Init(int len,string& range);//, string& range
   void Init(int len);//,CRangeChar** ranges, string& range
