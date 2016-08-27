@@ -246,6 +246,10 @@ bool CGenPassword::Inc(int index){
           countPointInsert++;
         }
    }   
+   if (countPointInsert==0){
+      eventError.CreateEventError("mask not valid, not chars \"*\"",ERROR_LITTLE_LENGTH_PASSWORD) ;
+   }
+   
    Init(countPointInsert, range); // создаем и инициализируем массив
    password=mask; 
    numbPassword=0;
