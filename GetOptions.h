@@ -27,7 +27,7 @@ class ex_range_char_not_valid : public std::exception{};
 class CGetOptions{
  public:
    CGetOptions(int argc, char* argv_[]);
-   
+
    string range;
    string sLengthPassword;
    //int lengthPassword;
@@ -36,6 +36,7 @@ class CGetOptions{
    string path7zip;// без кавычек
    string arhiveName;
    string userName;
+   string docName;
    string sTranslitType;
    string startValue;
    string countThread;
@@ -48,6 +49,7 @@ class CGetOptions{
    bool IsFindOpitonV;
    bool IsFindOpitonA;
    bool IsFindOpitonU;
+   bool IsFindOpitonW;
    bool IsFindOpitonT;
    bool IsFindOpitonS;
    bool IsFindOpitonN;
@@ -58,7 +60,7 @@ class CGetOptions{
    CPropOptions propOptions;
    void CheckExistFile(string& fileName);
    //void PrintMSG(string & msg);
-   void PrintMSG(const char  * cMsg1, const char  * cMsg2);   
+   void PrintMSG(const char  * cMsg1, const char  * cMsg2);
    void printHelp();
    string getNextArgAsString(int numArg);
    //int StringToInt(string & s,const char * option);

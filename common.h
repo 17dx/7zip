@@ -7,7 +7,7 @@
 
 #define  EXIT_IF_ERROR() \
   if (eventError.LastError() != ERROR_NONE) return ;
-  
+
 using std::string;
 
 typedef  unsigned long long TCount;
@@ -16,8 +16,8 @@ class CEventError{
 public:
   static int codeError;
   CEventError();
-  int LastError(); 
-  void CreateEventError(string msgErr,int codeError); 
+  int LastError();
+  void CreateEventError(string msgErr,int codeError);
 };
 
 int  StringToInt(string  s);
@@ -29,5 +29,7 @@ string to_string(const T v){
    ss << v ;
    return ss.str();
 };
- 
+
+
+
  #endif // COMMON_H

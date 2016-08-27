@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pget" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/pget" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters='-w &quot;2.docx&quot; -m&quot;[2-0]{3}&quot; -e -v' />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-lole32  -luuid -loleaut32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/pget" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lole32  -luuid" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="FindPassword.cpp" />
+		<Unit filename="FindPassword.h" />
+		<Unit filename="GenPassword.cpp" />
+		<Unit filename="GenPassword.h" />
+		<Unit filename="GetOptions.cpp" />
+		<Unit filename="GetOptions.h" />
+		<Unit filename="ParseRangesInMask.cpp" />
+		<Unit filename="ParseRangesInMask.h" />
+		<Unit filename="PropOption.cpp" />
+		<Unit filename="PropOption.h" />
+		<Unit filename="RangeChar.cpp" />
+		<Unit filename="RangeChar.h" />
+		<Unit filename="cmd.cpp" />
+		<Unit filename="common.cpp" />
+		<Unit filename="common.h" />
+		<Unit filename="directThread.cpp" />
+		<Unit filename="directThread.h" />
+		<Unit filename="noerrors.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

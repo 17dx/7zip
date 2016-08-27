@@ -15,12 +15,12 @@ public:
   static CAbstractGenPassword ** genPasswordArr;
   static CFindPassword * findPassword;
   int * argThread;
-  
+
   CEventError eventError;
-  int countThread; 
+  int countThread;
   TCount total_count;
   CDirectThread(CGetOptions * options_);
-
+  ~CDirectThread();
   void Run();
   TCount CalcSum();
   void PrintLastPassword();
@@ -30,13 +30,13 @@ protected:
   CONSOLE_SCREEN_BUFFER_INFO binfo;
   HANDLE * hThreats;
   CFindPassword * GetObjFindPassword();
-  CAbstractGenPassword * GetObjGenPassword(); 
+  CAbstractGenPassword * GetObjGenPassword();
   void SplitTaskOnThread();
-  void PrintStat(TCount sum); 
+  void PrintStat(TCount sum);
   void EraseLinesCOut()  ;
   bool HaveFinishedAllThread();
   void PrepareConsoleScreen();
-  
+
 };
 
 #endif // DIRECTTHREAD_H
