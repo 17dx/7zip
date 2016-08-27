@@ -81,7 +81,8 @@ void CGetOptions::registerAllOptions(){
   propOptions.registerOption( "-m",
                       &mask,
                       " -m mask    - mask for password, not compatible with -l and -d, \n"
-                      "              for example: \"ma*k\"\n",
+                      "              for example: \"ma*k\"\n"
+                      "              behavior modification using option -e \n",
                       &IsFindOpitonM);
 
 
@@ -95,7 +96,7 @@ void CGetOptions::registerAllOptions(){
 
   propOptions.registerOption( "-s",
                       &startValue,
-                      " -s value   - start value for password",
+                      " -s value   - start value for password\n",
                       &IsFindOpitonS);
 
    propOptions.registerOption( "-z",
@@ -113,25 +114,24 @@ void CGetOptions::registerAllOptions(){
 
    propOptions.registerOption( "-u",
                       &userName,
-                      " -u name   - User name from local system,\n"
-                      "             option not compatible with -a and -w\n"
-                      "             default the option is disabled\n",
+                      " -u name    - User name from local system,\n"
+                      "              option not compatible with -a and -w\n",
                       &IsFindOpitonU);
 
   propOptions.registerOption( "-w",
                       &docName,
-                      " -w name   - doc name, not compatible with -u and -a\n",
+                      " -w name    - doc name, not compatible with -u and -a\n",
                       &IsFindOpitonW);
 
   propOptions.registerOption( "-t",
                       &sTranslitType,
-                      " -t  type   - translit word from dictionary, used with option -d\n"
+                      " -t type    - translit word from dictionary, used with option -d\n"
                       "              available types: both and only\n",
                       &IsFindOpitonT);
 
   propOptions.registerOption( "-n",
                       &countThread,
-                      " -n  count  - count thread, not compatible with option -d\n"
+                      " -n count   - count thread, not compatible with option -d\n"
                       "              default count = 1\n",
                       &IsFindOpitonN);
 
