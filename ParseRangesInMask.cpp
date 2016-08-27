@@ -23,8 +23,8 @@ bool CParseRangesInMask::RepeatRange(string & range){
           if (LastError()!=ERROR_NONE){ return false;}
           if (res){
               int countRepeat=StringToInt(value);
+              countRepeat--;
               if (LastError()!=ERROR_NONE){ return false;} 
-                    
               for (int j=0;j<countRepeat;j++){
                   AppendSubRange(range);                
               }
