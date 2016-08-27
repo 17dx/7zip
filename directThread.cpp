@@ -33,10 +33,18 @@ void CDirectThread::EraseLinesCOut(){
    }  
 }
 
+void CDirectThread::FinishThreads(){
+  findPassword->workFinished =true;
+  while( !HaveFinishedAllThread() ){
+    Sleep(1000);
+  }
+}
+
+
 bool CDirectThread::HaveFinishedAllThread(){
   int countFinished=0;
-  for(int i=0; i<countThread; i++)  {    
-     if (WaitForSingleObject(hThreats[i],0)==WAIT_FAILED){
+  for(int i=0; i<countThread; i++)  {  
+     if (WaitForSingleObject(hThreats[i],0)==WAIT_OBJECT_0){
          countFinished++;
      };     
   }
@@ -86,7 +94,7 @@ void CDirectThread::Run(){
          cout<< "\npassword not found                          "<< endl;
          break;
       }
-   }   
+   }  
   } 
   return ;//false
 }

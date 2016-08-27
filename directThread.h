@@ -24,6 +24,7 @@ public:
   void Run();
   TCount CalcSum();
   void PrintLastPassword();
+  void FinishThreads();
 protected:
   HANDLE hCout;
   CONSOLE_SCREEN_BUFFER_INFO binfo;

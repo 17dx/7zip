@@ -41,11 +41,11 @@ public:
   bool DoFind(CAbstractGenPassword& genPassword);
   virtual ~CFindPassword();
   bool FindOK();
-  
+  CRITICAL_SECTION printStdOut; 
 protected:
   bool verbose;
   bool findOK; 
-    
+   
 };
 
 class CArhiveConsole7z:public CFindPassword {

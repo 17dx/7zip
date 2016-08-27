@@ -16,6 +16,7 @@ CFindPassword::CFindPassword(bool verbose_){
     verbose = verbose_;
     findOK=false;
     workFinished=false;
+    InitializeCriticalSection(&printStdOut);
 }
 
  CFindPassword::~CFindPassword(){
@@ -26,29 +27,19 @@ bool CFindPassword::FindOK(){
 }
 
 bool CFindPassword::DoFind(CAbstractGenPassword& genPassword){
-  /*TCount countPasswords= genPassword.CountPasswords();
-  cout<<"count passwords:" << std::fixed<<std::setprecision(0)<< countPasswords<< endl; 
-  int lastPercent =0;
-  int percent=0;*/
+
   do{
      
      if (verbose){
-         cout<< genPassword.password<< endl; //todo
+       EnterCriticalSection(&printStdOut) ;
+         cout<< genPassword.password<< endl; 
+       LeaveCriticalSection(&printStdOut) ; 
      }
-     /*else{
-        percent = (static_cast<double> (genPassword.numbPassword)/countPasswords*100);
-        if (percent>lastPercent){
-           lastPercent=percent;
-           cout << setfill(' ') << setw(3)<< percent;
-           cout << "% :: " << genPassword.password << "\r";
-        }
-     }*/
      
      if ( PasswordIsTrue(genPassword.passwordInfo) ){  
         truePassword= genPassword.password  ;
         findOK=true;
         workFinished =true;       
-        //cout<< "\npassword found: \""<< genPassword.password <<"\"                  "<< endl;
         return true; 
      };
      if (workFinished){

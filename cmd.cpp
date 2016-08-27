@@ -17,6 +17,7 @@ using std::cin;
 time_t tStart, tEnd;
 CDirectThread * directThread=NULL;
 
+
 void ExitProg(){
   cin.get(); 
   exit(0);
@@ -49,7 +50,7 @@ void ShowLastPassword(){
 
 BOOL WINAPI HandlerRoutine (DWORD dwCtrlType){
   if (dwCtrlType==CTRL_C_EVENT){ 
-     directThread->findPassword->workFinished =true;  
+     directThread->FinishThreads();  
      cout<<"interrupted by the user\n";
      ShowLastPassword();
      ShowEndStat();     
@@ -65,7 +66,6 @@ int  main(int argc, char* argv[])
 {       
 
     SetConsoleCtrlHandler((PHANDLER_ROUTINE)HandlerRoutine, true);
-
     try{
         CGetOptions  options(argc,  argv); 
         directThread = new CDirectThread(&options);
