@@ -35,6 +35,7 @@ typedef void (__stdcall *FOpenArhive)( const char * );
 class CFindPassword {
 public:  
   string truePassword; 
+  bool workFinished;
   CFindPassword( bool verbose_);
   virtual bool PasswordIsTrue(SPasswordInfo& passwordInfo)=0;
   bool DoFind(CAbstractGenPassword& genPassword);
@@ -43,7 +44,8 @@ public:
   
 protected:
   bool verbose;
-  bool findOK;  
+  bool findOK; 
+    
 };
 
 class CArhiveConsole7z:public CFindPassword {

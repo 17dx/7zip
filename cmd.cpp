@@ -48,7 +48,8 @@ void ShowLastPassword(){
 
 
 BOOL WINAPI HandlerRoutine (DWORD dwCtrlType){
-  if (dwCtrlType==CTRL_C_EVENT){  
+  if (dwCtrlType==CTRL_C_EVENT){ 
+     directThread->findPassword->workFinished =true;  
      cout<<"interrupted by the user\n";
      ShowLastPassword();
      ShowEndStat();     

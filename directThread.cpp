@@ -10,14 +10,12 @@ using std::setfill;
 using std::setw;
  
 CAbstractGenPassword ** CDirectThread::genPasswordArr;
-int CDirectThread::currThread;
-bool CDirectThread::lockRunNewThread;
+
 
 CFindPassword * CDirectThread::findPassword;
 
-DWORD WINAPI ThreadStart(LPVOID){
-   int currThread=CDirectThread::currThread;
-   CDirectThread::lockRunNewThread=false;
+DWORD WINAPI ThreadStart(LPVOID pcurrThread){
+   int currThread= *static_cast<int*> (pcurrThread);
    CDirectThread::findPassword->DoFind(
              *CDirectThread::genPasswordArr[currThread]);
          
@@ -35,37 +33,56 @@ void CDirectThread::EraseLinesCOut(){
    }  
 }
 
+bool CDirectThread::HaveFinishedAllThread(){
+  int countFinished=0;
+  for(int i=0; i<countThread; i++)  {    
+     if (WaitForSingleObject(hThreats[i],0)==WAIT_FAILED){
+         countFinished++;
+     };     
+  }
+  return (countFinished==countThread);
+  
+}
+
+void CDirectThread::PrepareConsoleScreen(){
+  if (! options->IsFindOpitonV){
+      EraseLinesCOut();
+      SetConsoleCursorPosition(hCout,binfo.dwCursorPosition);
+  }
+}
+
 void CDirectThread::Run(){
   SplitTaskOnThread();
   EXIT_IF_ERROR() ; 
   cout<<"count passwords:" << std::fixed<<std::setprecision(0)<< total_count<< endl; 
   
-  for(currThread=0; currThread<countThread; currThread++) {
-   lockRunNewThread=true;     
-   CreateThread(NULL, 0, ThreadStart, NULL, 0, NULL);
-   while (lockRunNewThread){
-     Sleep((DWORD)1*1000);
-   }
+  for(int i=0; i<countThread; i++) {  
+   argThread[i]=i;  
+   hThreats[i]=CreateThread(NULL, 0, ThreadStart, &argThread[i], 0, NULL);
+
   }
+  
   hCout=GetStdHandle(STD_OUTPUT_HANDLE);
   GetConsoleScreenBufferInfo(hCout, &binfo);
   binfo.dwCursorPosition.Y-=countThread; //не знаю почему нужно вычитать
+  
   for(;;)  {
    Sleep((DWORD)1*1000);
    if (findPassword->FindOK()){
-       EraseLinesCOut();
-       SetConsoleCursorPosition(hCout,binfo.dwCursorPosition);
+       PrepareConsoleScreen();
        cout<< "\npassword found: \""<< findPassword->truePassword <<"\"                  "<< endl;
        return ;//true; 
    }
-   else{
-      TCount sum=CalcSum();
-      PrintStat(sum);
-      PrintLastPassword();
-      SetConsoleCursorPosition(hCout,binfo.dwCursorPosition);
-      if (sum>=total_count){
-         EraseLinesCOut();
-         SetConsoleCursorPosition(hCout,binfo.dwCursorPosition);
+   else{      
+      if (! options->IsFindOpitonV){
+          TCount sum=CalcSum();
+          PrintStat(sum);
+          PrintLastPassword();
+          SetConsoleCursorPosition(hCout,binfo.dwCursorPosition);
+      }
+      
+      if ( HaveFinishedAllThread() ){ //todo исправить условие окончания работыsum>=total_count
+         PrepareConsoleScreen();
          cout<< "\npassword not found                          "<< endl;
          break;
       }
@@ -87,15 +104,23 @@ void CDirectThread::SplitTaskOnThread(){
     TCount remain=total_count - count_for_each*countThread;
    //остаток достанется последнему потоку  
     genPasswordArr= new CAbstractGenPassword* [countThread];
-    
-    for(int i=0; i<countThread; i++)  {
+    hThreats=new HANDLE [countThread];
+    argThread=new int [countThread];
+    for(int i=0; i<countThread; i++)  {       
+       if (countThread==1){
+         genPasswordArr[i]=genPassword;
+         //если поток всего один управление настройками не требуется
+         //и новый создавать нет смысла поэтому копируем genPassword
+       }
+       else{
+           genPasswordArr[i]=GetObjGenPassword();
+           genPasswordArr[i]->SetNewLowerBoundary(count_for_each*i);
+           genPasswordArr[i]->SetNewUpperBoundaryAsMax(count_for_each);       
+           genPasswordArr[i]->ReCreateFirstPassword();
+       }
        string extraInfo="test";
        extraInfo+=to_string(i);
-       genPasswordArr[i]=GetObjGenPassword();
-       genPasswordArr[i]->SetNewLowerBoundary(count_for_each*i);
-       genPasswordArr[i]->SetNewUpperBoundaryAsMax(count_for_each);
        genPasswordArr[i]->InitExtraInfo(extraInfo);
-       genPasswordArr[i]->ReCreateFirstPassword();
     } 
     //добавляем остатки к последнему
     genPasswordArr[countThread-1]->upperBoundaryCountPassword+= remain;
@@ -138,7 +163,7 @@ CFindPassword * CDirectThread::GetObjFindPassword(){
            findPassword=new CUserLogon(options->userName,options->IsFindOpitonV);
         }
         else {
-           findPassword=new CArhiveWith_Dll7z(options->arhiveName,options->IsFindOpitonV);;
+           findPassword=new CArhiveWith_Dll7z(options->arhiveName,options->IsFindOpitonV);
         }
 
     return findPassword;

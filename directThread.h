@@ -13,9 +13,9 @@ class CDirectThread{
 public:
   CGetOptions * options;
   static CAbstractGenPassword ** genPasswordArr;
-  static int currThread;
-  static bool lockRunNewThread;
   static CFindPassword * findPassword;
+  int * argThread;
+  
   CEventError eventError;
   int countThread; 
   TCount total_count;
@@ -27,12 +27,15 @@ public:
 protected:
   HANDLE hCout;
   CONSOLE_SCREEN_BUFFER_INFO binfo;
-  
+  HANDLE * hThreats;
   CFindPassword * GetObjFindPassword();
   CAbstractGenPassword * GetObjGenPassword(); 
   void SplitTaskOnThread();
   void PrintStat(TCount sum); 
   void EraseLinesCOut()  ;
+  bool HaveFinishedAllThread();
+  void PrepareConsoleScreen();
+  
 };
 
 #endif // DIRECTTHREAD_H

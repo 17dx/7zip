@@ -15,6 +15,7 @@ using std::setfill;
 CFindPassword::CFindPassword(bool verbose_){
     verbose = verbose_;
     findOK=false;
+    workFinished=false;
 }
 
  CFindPassword::~CFindPassword(){
@@ -45,10 +46,14 @@ bool CFindPassword::DoFind(CAbstractGenPassword& genPassword){
      
      if ( PasswordIsTrue(genPassword.passwordInfo) ){  
         truePassword= genPassword.password  ;
-        findOK=true;        
+        findOK=true;
+        workFinished =true;       
         //cout<< "\npassword found: \""<< genPassword.password <<"\"                  "<< endl;
         return true; 
      };
+     if (workFinished){
+         ExitThread(0);
+     }
   } 
   while( genPassword.Next() );
   return false;
