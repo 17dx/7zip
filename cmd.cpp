@@ -90,6 +90,11 @@ BOOL WINAPI HandlerRoutine (DWORD dwCtrlType){
 
 int  main(int argc, char* argv[])
 {
+    system("cls");
+    for (int i=0; i < argc; i+=1){
+      cout<< argv[i]<< " ";
+    }
+    cout<<endl;
     InitializeCriticalSection(&cs_DoStop);
     SetConsoleCtrlHandler((PHANDLER_ROUTINE)HandlerRoutine, true);
     try{

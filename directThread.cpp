@@ -70,17 +70,15 @@ void CDirectThread::PrepareConsoleScreen(){
 void CDirectThread::Run(){
   SplitTaskOnThread();
   EXIT_IF_ERROR() ;
-  cout<<"count passwords:" << std::fixed<<std::setprecision(0)<< total_count<< endl;
 
+  cout<<"count passwords:" << std::fixed<<std::setprecision(0)<< total_count<< endl;
+  hCout=GetStdHandle(STD_OUTPUT_HANDLE);
+  GetConsoleScreenBufferInfo(hCout, &binfo);
+  //binfo.dwCursorPosition.Y-=countThread; //не знаю почему нужно вычитать
   for(int i=0; i<countThread; i++) {
    argThread[i]=i;
    hThreats[i]=CreateThread(NULL, 0, ThreadStart, &argThread[i], 0, NULL);
-
   }
-
-  hCout=GetStdHandle(STD_OUTPUT_HANDLE);
-  GetConsoleScreenBufferInfo(hCout, &binfo);
-  binfo.dwCursorPosition.Y-=countThread; //не знаю почему нужно вычитать
 
   for(;;)  {
    Sleep((DWORD)1*1000);

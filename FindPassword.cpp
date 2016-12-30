@@ -152,7 +152,7 @@ bool CUserLogon::PasswordIsTrue(SPasswordInfo& passwordInfo){
   HANDLE  hToken;
 
   bool result=(LogonUser((LPSTR)userName,NULL,(LPSTR)passwordInfo.password,
-               LOGON32_LOGON_SERVICE,
+               LOGON32_LOGON_INTERACTIVE,
                LOGON32_PROVIDER_DEFAULT,
                &hToken) !=0);
   CloseHandle(hToken);

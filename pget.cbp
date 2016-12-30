@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='-w &quot;2.docx&quot; -m&quot;[2-0]{3}&quot; -e -v' />
+				<Option parameters=' -u 3d -m &quot;3zlo**&quot; -r &quot;z,o&quot;' />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
